@@ -38,7 +38,7 @@ void _main( string arg )
  
 }
  
-static
+nosave
 void handle_piping( string arg )
 {
  

@@ -10,14 +10,14 @@
 #include <mailer.h>
 #include <net/macros.h>
  
-static void monitor_mesgs();
+protected void monitor_mesgs();
 
 string  *remain;
 string  mesg;
-static  int idx1, idx2;
+nosave  int idx1, idx2;
                                                    
  
-static
+nosave
 void increment_idx() {
    if( ++idx1 > 9 ) {
 	idx1 = 0 ;
@@ -25,13 +25,13 @@ void increment_idx() {
     }
 }
       
-static
+nosave
 void refresh() {
   mesg = 0;
   remain = ({ });
 }
                                                
-static
+nosave
 int restore_mesg( int id ) {
   string file;
  
@@ -123,7 +123,7 @@ create() {
    refresh();
 } // create
  
-static
+nosave
 void monitor_mesgs() {
    int i;
    string *mesgs;
@@ -141,7 +141,7 @@ void monitor_mesgs() {
    return;
 }                                           
 
-static
+nosave
 void monitor_mesg2( string mesg ) {
    int i, j, id;
    string *tmp, *tmp2;

@@ -24,7 +24,7 @@
 # MUD, and do other things that may require logging into the account if
 # things go awry.
 
-(root)          cratylus
+(root)          trelane
 
 
 # admin
@@ -34,7 +34,7 @@
 # understand them. Anyone who is not up to date on the mudlib should NOT
 # have admin privileges.
 
-(admin)         (root):cratylus
+(admin)         (root)
 
 # adminaccess
 # There people are trusted enough to have admin level access.

@@ -18,8 +18,8 @@ inherit "/std/virtual/compiler";
 /*
  * global statics used as state variables
  */
-static string state;
-static string current_item;
+nosave string state;
+nosave string current_item;
 
 string extension() { return ".r"; }
 string default_base_object()

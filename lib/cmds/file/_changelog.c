@@ -36,9 +36,9 @@ void push_coder(string file) {
         coders += ({ who });
 	files += ({ file });
 }
-void pop_coder(int ref) {
-	coders -= ({ coders[ref] });
-	files -= ({ files[ref] });
+void pop_coder(int ref_idx) {
+	coders -= ({ coders[ref_idx] });
+	files -= ({ files[ref_idx] });
 }
 int cmd_changelog(string path) {
    string who, tmp, temp1, temp2;

@@ -8,14 +8,14 @@
 mixed resolv_ref( mixed a )
 {
   mixed ret;
-  string ref;
+  string ref_str;
 
   if( !stringp( a ) ) return a;
-  if( !sscanf( a, "#%s", ref ) ) return a;
-  if( ref == "#" ) return this_player()-> query( "cwf" );
+  if( !sscanf( a, "#%s", ref_str ) ) return a;
+  if( ref_str == "#" ) return this_player()-> query( "cwf" );
   ret = this_player()-> query( "ref" );
   if( !mapp( ret ) ) return a;
-  ret = ret[ref];
+  ret = ret[ref_str];
   if( undefinedp( ret ) ) return a;
   return ret;
 }
