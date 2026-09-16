@@ -78,7 +78,7 @@
 //  The AUTO_WIZHOOD define causes all those to login as new users to be
 //  granted automatic wizship, and given the PATH in the define.
  
-#define AUTO_WIZHOOD
+#undef AUTO_WIZHOOD
  
  
 // The SAFETY_SHUTDOWN define allows an admin to type "shutdown" at

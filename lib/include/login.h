@@ -77,11 +77,7 @@
 //  characters via email before they can play.  The defined message
 //  will be displayed before the connection is closed.
  
-#ifdef 0
-#define REGISTER_MSG "This mud is presently register-only. To obtain " + \
-	   "a character, \nplease send an email request to " + \
-  	   ADMIN_EMAIL + ".\nHope to hear from you soon.\n\n"
-#endif
+#define REGISTER_MSG "\n\tLCARS-MUD is invitation-only.\n\tIf you were invited, please use the name you were given.\n\n"
  
  
 //  If you only want one Guest character to be online at one time,
