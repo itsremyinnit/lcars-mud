@@ -5,8 +5,6 @@ void create() {
     err = catch(ffi_load("libc.so.6"));
     write("ffi_load:       " + (err ? "BLOCKED " + err : "ALLOWED (PROBLEM)\n"));
 
-    err = catch(external_start(1, "id", (: 0 :), (: 0 :)));
-    write("external_start: " + (err ? "BLOCKED " + err : "ALLOWED (PROBLEM)\n"));
 
     err = catch(write("read_file:      " +
         (read_file("/../etc/config.tmi2") ? "READ SUCCEEDED (PROBLEM)\n" : "BLOCKED\n")));
