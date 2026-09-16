@@ -270,6 +270,9 @@ int valid_save_binary( string filename )
 // valid_seteuid: determines whether an object ob can become euid str.
 // This is very important because the euids still control most of the
 // access permissions.
+// LCARS-MUD: nobody may load native code through FFI, regardless of driver defaults.
+int valid_ffi(string op, mixed arg, object caller) { return 0; }
+
 int valid_seteuid( object ob, string str )
 {
     // ROOT_UID has priveleges...
