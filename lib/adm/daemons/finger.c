@@ -82,6 +82,11 @@ object restore_data(string name) {
     return 0;
 }
 
+// LCARS-MUD: private details are shown to admins only
+private int viewer_admin() {
+    return this_player() && adminp(getuid(this_player()));
+}
+
 string finger_user(string who) {
     object link;
     mixed tmp1, tmp2, tmp3, tmp4, tmp5;
@@ -98,7 +103,7 @@ string finger_user(string who) {
 
     tmp1 = "Login name: " + who;
     tmp2 = "In real life: ";
-    if (tmp3 = (string)link->RNAME)
+    if (viewer_admin() && (tmp3 = (string)link->RNAME))
         tmp2 += extract(tmp3, 0, 22);
     else
         tmp2 += "?";
@@ -139,8 +144,8 @@ string finger_user(string who) {
         msg += (tmp1 ? "On since: " : "Last on: ") + "Unavailable\n";
     else
         msg += ((tmp1 && !tmp1->query("npc")) ? "On since: " : "Last on: ") +
-              ctime((int)link->query("last_on")) + " from " +
-              (string)link->query("ip") + " \n";
+              ctime((int)link->query("last_on")) +
+              (viewer_admin() ? " from " + (string)link->query("ip") : "") + "\n";
 
     if (tmp1) {
         tmp1 = query_idle_string(tmp1, 1);
@@ -164,7 +169,8 @@ string finger_user(string who) {
 	msg += ".\n" ;
  }
     tmp1 = (string)link->query("email");
-    msg += "Email address: " + tmp1 + "\n";
+    if (viewer_admin())
+        msg += "Email address: " + tmp1 + "\n";
 
     tmp1 = user_path(who) + ".project";
     if (file_size(tmp1) >= 0)
@@ -282,7 +288,7 @@ string finger_all() {
               ctime(time()) + ").\n";
         msg += LINE2;
         msg += sprintf("%-12s%-20s%-14s%-7s%-21s", "Login", "Real Name",
-              "Position", "Idle", "Where\n");
+              "Position", "Idle", "Where") + "\n";
         msg += LINE2;
     }
     for (i = 0; i < j; i++) {
@@ -292,10 +298,10 @@ string finger_all() {
 
         msg += sprintf("%-12s%-20s%-14s%-7s%-21s",
               capitalize((string)link->NAME),
-              capitalize(extract((string)link->RNAME, 0, 18)),
+              (viewer_admin() ? capitalize(extract((string)link->RNAME, 0, 18)) : ""),
               capitalize((string)DOMAIN_D->query_domain_level(link)),
               query_idle_string(who[i], 0),
-              extract(query_ip_name(who[i]), 0, 20) + "\n");
+              (viewer_admin() ? extract(query_ip_name(who[i]), 0, 20) : "")) + "\n";
    }
 
    return msg + LINE1;

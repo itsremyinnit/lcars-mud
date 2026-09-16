@@ -1,33 +1,14 @@
 // hostname.c
-// Tells you what host the mud is running on.
-// Someone wrote it and didn't add a header.
-// Mobydick tacked the header on and added help, 11-20-92
-// Someone else 'fixed' it in a most unusual manner. 93-08-26
-
-#include <config.h>
-//#include <net/daemons.h>
-#include <net/i3.h>
+// Tells you what MUD you're on and which port.
+// LCARS-MUD: rewritten to stop depending on the Intermud-3 mud list.
 #include <mudlib.h>
+inherit DAEMON;
 
-inherit DAEMON ;
-
-int cmd_hostname()
-{
-  mapping list=I3_DAEMON->query_mudlist();
-  string *names=keys(list);
-  mixed vls=values(list); 
-
-    printf( "%s is running on %s, port: %d.\n",
-        capitalize(THIS_MUD),
-        //(string)DNS_MASTER-> get_host_name(THIS_MUD),
-        vls[member_array(mud_name(),names)][1],
-        __PORT__,
-    );
+int cmd_hostname() {
+    printf("%s is running on port %d.\n", capitalize(mud_name()), __PORT__);
     return 1;
 }
 
 string help() {
-	return ("Syntax: hostname\n\n"+
-"Tell you the name of the MUD you're playing. For the forgetful..:)\n") ;
+    return "Syntax: hostname\n\nTells you the name of the MUD you're playing. For the forgetful. :)\n";
 }
- 
