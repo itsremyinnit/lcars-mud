@@ -63,7 +63,7 @@
 //  If USER_LIST is defined, a list of visible users will be given
 //  during the login welcome screen.
  
-#define USER_LIST
+#undef USER_LIST
  
  
 //  Define NO_SHUTDOWN_LOGIN if you wish to prevent non-admins from
