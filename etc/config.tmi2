@@ -157,3 +157,5 @@ save binaries directory : /data/binaries
 debug log file : debug.log
 global include file : <mudlib.h>
 enable mssp : 0
+external_port_2 : telnet 5556
+external_port_2_tls : cert=/opt/mud/etc/tls/fullchain.pem key=/opt/mud/etc/tls/privkey.pem
