@@ -268,6 +268,7 @@ protected void get_password(string pass, object ob, int count)
     write("\n");
     if (!check_password(pass, ob) && (string)ob->query("name") != "guest")
       { write("Sorry, that password is incorrect.\n");
+        log_file("adm/auth_failures", ctime(time()) + " BADPASS name=" + (string)ob->query("name") + " ip=" + query_ip_number(ob) + "\n");  // LCARS-MUD: every failure, for fail2ban
 	if (count > 2)
 	  { write("\nYou have taken too many tries.\n");
 	    ob->set("passwd_fail", ({ query_ip_name(ob), time() }) );
