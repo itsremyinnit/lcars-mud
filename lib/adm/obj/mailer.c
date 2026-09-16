@@ -334,7 +334,7 @@ do_mail( string cmd ) {
 } // do_mail
 
 
-nosave
+protected
 void
 get_cc( string arg ) {
   int i, max;
@@ -369,7 +369,7 @@ get_cc( string arg ) {
 } // get_cc
 
 
-nosave
+protected
 void
 get_to( string arg ) {
   if( arg == "" )  {
@@ -402,7 +402,7 @@ get_to( string arg ) {
 } // get_to
 
 
-nosave
+protected
 void
 mail( string arg ) {
   sscanf( arg, "%s<%s", arg, mail_a_file );
@@ -450,7 +450,7 @@ do_from( string arg ) {
 } // do_from
 
 
-nosave
+protected
 int
 update_box() {
   int i, num;
@@ -468,7 +468,7 @@ update_box() {
 } // update_box
 
 
-nosave
+protected
 void
 do_quit( string cmd ) {
   int num, size;
@@ -505,7 +505,7 @@ done_more() {
 } // done_more
 
 
-nosave
+protected
 void
 get_subject( string sub ) {
   int i, max;
@@ -569,7 +569,7 @@ get_text() {
 }
 
 
-nosave
+protected
 void
 do_header( string arg ) {
   int start;
@@ -585,7 +585,7 @@ do_header( string arg ) {
 } // do_header
 
 
-nosave
+protected
 void
 do_setpos( string arg ) {
   int p;
@@ -598,7 +598,7 @@ do_setpos( string arg ) {
 } // do_setpos
 
 
-nosave
+protected
 void
 read_mail( int num ) {
   string tmp_msg, to, cc;
@@ -646,7 +646,7 @@ read_mail( int num ) {
 } // read_mail
 
 
-nosave
+protected
 void
 do_help( string arg ) {
   if( arg == "long" )
@@ -656,7 +656,7 @@ do_help( string arg ) {
 } // do_help
 
 
-nosave
+protected
 void
 delete_mail( string str ) {
   int i, num;
@@ -686,7 +686,7 @@ delete_mail( string str ) {
 } // delete_mail
 
 
-nosave
+protected
 void undelete_mail( string str ) {
   int num;
   
@@ -704,7 +704,7 @@ void undelete_mail( string str ) {
 } // undelete_mail
 
 
-nosave
+protected
 void do_reply( string cmd, string numstr ) {
   int num, i, max;
   
@@ -748,7 +748,7 @@ void do_reply( string cmd, string numstr ) {
 } // do_reply
 
 
-nosave
+protected
 void
 add_group( string str ) {
   string *members, *res, grp, a, b;
@@ -809,7 +809,7 @@ add_group( string str ) {
 } // add_group
 
 
-nosave
+protected
 void
 remove_group( string str ) {
   string *members;
@@ -845,7 +845,7 @@ remove_group( string str ) {
 } // remove_group
 
 
-nosave
+protected
 void
 do_groups( string arg ) {
   mapping grps;
@@ -877,7 +877,7 @@ do_groups( string arg ) {
 } // do_groups
 
 
-nosave
+protected
 void
 get_forward_to( string arg, int num ) {
   string t;
@@ -919,7 +919,7 @@ get_forward_to( string arg, int num ) {
 } // get_forward_to
 
 
-nosave
+protected
 void
 do_forward( string arg ) {
   string target;
@@ -1041,7 +1041,7 @@ do_resync( int flag )
 } // do_resync
 
 
-nosave
+protected
 void
 parse_mailcmd( string cmd )
 {

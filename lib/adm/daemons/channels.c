@@ -53,7 +53,7 @@ tell_user(object user, string mesg)
 #define NO_NEW_CHANNELS
 
 // Begin admin_channel() - only applies to I3 at the moment but who knows
-private nosave
+private
 int admin_channel( string chan, object user, string* add_list,
                                                 string* rem_list )
 { string ext_ob, err;

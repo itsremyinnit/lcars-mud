@@ -1298,7 +1298,7 @@ void heart_beat() {
  */
 nomask int query_linkdead() {  return !interactive(this_object());  }
 
-nosave
+protected
 void net_dead() {
 
     save_data();

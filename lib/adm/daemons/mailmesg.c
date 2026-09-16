@@ -17,7 +17,7 @@ string  mesg;
 nosave  int idx1, idx2;
                                                    
  
-nosave
+protected
 void increment_idx() {
    if( ++idx1 > 9 ) {
 	idx1 = 0 ;
@@ -25,13 +25,13 @@ void increment_idx() {
     }
 }
       
-nosave
+protected
 void refresh() {
   mesg = 0;
   remain = ({ });
 }
                                                
-nosave
+protected
 int restore_mesg( int id ) {
   string file;
  
@@ -123,7 +123,7 @@ create() {
    refresh();
 } // create
  
-nosave
+protected
 void monitor_mesgs() {
    int i;
    string *mesgs;
@@ -141,7 +141,7 @@ void monitor_mesgs() {
    return;
 }                                           
 
-nosave
+protected
 void monitor_mesg2( string mesg ) {
    int i, j, id;
    string *tmp, *tmp2;

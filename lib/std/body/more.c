@@ -379,7 +379,7 @@ search_reverse (string arg)
 }
 
 
-nosave
+protected
 void
 exec_cmd (string arg)
 {

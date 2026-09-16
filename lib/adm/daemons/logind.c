@@ -337,7 +337,7 @@ query_ip_name( ob ) + "\n" );
 }
  
  
-nosave
+protected
 void login_new_copy(object ob)
 {
     if (!ob->restore_body())
@@ -355,7 +355,7 @@ void login_new_copy(object ob)
 }
  
  
-nosave
+protected
 void exec_old_copy(string s, object user)
 {
     object tmp, link;

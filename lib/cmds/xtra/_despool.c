@@ -77,7 +77,7 @@ write (user_mbox_file( owner )+"\n") ;
    return 1 ;
 } // init
 
-nosave
+protected
 void
 write_mail (int num, string filenm) {
   string tmp_msg, to, cc;
