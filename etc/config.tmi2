@@ -159,3 +159,6 @@ global include file : <mudlib.h>
 enable mssp : 0
 external_port_2 : telnet 5556
 external_port_2_tls : cert=/opt/mud/etc/tls/fullchain.pem key=/opt/mud/etc/tls/privkey.pem
+external_port_3 : websocket 5557
+external_port_3_tls : cert=/opt/mud/etc/tls/fullchain.pem key=/opt/mud/etc/tls/privkey.pem
+websocket http dir : /opt/mud/www
