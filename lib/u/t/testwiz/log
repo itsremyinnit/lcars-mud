@@ -1,3 +1,0 @@
-/u/t/testwiz/escape.c:8:57: error: Undefined function external_start
-    8 |     err = catch(external_start(1, "id", (: 0 :), (: 0 :)));
-      |                                                         ^
