@@ -21,6 +21,8 @@ int router_password, mudlist_id, chanlist_id;
 mapping mudlist, chanlist;
  
 // Prototypes :)
+#define I3_ENABLED 0  // LCARS-MUD: Intermud-3 disabled (private MUD)
+
 void create();
 void check_router();
 
@@ -281,6 +283,7 @@ void create(){
     bootflag=1;
 
     setup_services();
+    if( !I3_ENABLED ) return;
     router_socket = clone_object(SOCKET, SKT_STYLE_CONNECT_M, 
                                  I3_ROUTER, (: read_callback :), 
                                  (: close_callback :) );
@@ -303,6 +306,7 @@ void remove(){
  
 
 void check_router() {
+    if( !I3_ENABLED ) return;
 
 if(!router_socket || !oob_socket) 
  {
