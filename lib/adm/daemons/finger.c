@@ -65,6 +65,7 @@ object restore_data(string name) {
     }
 
     link = new(CONNECTION);
+    link->clear_euid();  // LCARS-MUD: see clear_euid() in /std/connection.c
     seteuid(name);
     export_uid(link);
     seteuid(ROOT_UID);

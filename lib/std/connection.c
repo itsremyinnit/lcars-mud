@@ -29,6 +29,14 @@ protected void terminal_type(string term);
 //  It would be Bad (tm) to allow a connection object to be shadowed.
 
 int query_prevent_shadow() {  return 1;  }
+
+// LCARS-MUD: lets a Root daemon (finger) prepare an offline connection object
+// the same way logon() does, so export_uid() can hand over the player uid.
+int clear_euid() {
+        if (geteuid(previous_object()) != ROOT_UID) return 0;
+        seteuid(0);
+        return 1;
+}
  
 // Keep this static so that only driver can call this.
 protected void logon() {
