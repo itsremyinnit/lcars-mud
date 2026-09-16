@@ -96,6 +96,19 @@ int cmd_makewiz(string str) {
  
    player->save_data();
    link->save_data();
+   //   LCARS-MUD: create the new wizard's home directory
+   {
+      string home = user_path(str);
+      string letter;
+      if (home[<1] == '/') home = home[0..<2];
+      letter = home[0..strsrch(home, "/", -1) - 1];
+      if (file_size(letter) != -2) mkdir(letter);
+      if (file_size(home) != -2) {
+         if (mkdir(home)) write("Created home directory " + home + "\n");
+         else write("Makewiz: could not create " + home + "\n");
+      }
+   }
+
  
    write("You have promoted " + capitalize(str) + " to wizard level.\n");
    write("Path now set to:\n   " + wrap(player->query("PATH")) + "\n");
