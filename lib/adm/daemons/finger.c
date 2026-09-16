@@ -236,7 +236,7 @@ string finger_group(string group) {
             if (!link)
                 continue; /* no such user */
 
-            tmp2 = (string)link->RNAME; /* real name */
+            tmp2 = viewer_admin() ? (string)link->RNAME : ""; /* real name */
 
             tmp3 = DOMAIN_D->query_domain(link);
             if ((tmp3 == 0) || (tmp3 == ""))
