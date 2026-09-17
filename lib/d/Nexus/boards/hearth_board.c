@@ -7,5 +7,5 @@ void create() {
     set_save_dir("/d/Nexus/data");
     set_save_file("hearth");
     set_location("/d/Nexus/rooms/kindled_hearth");
-    set("short.text", "A notice board by the hearth door");
+    set("short.text", "Hearthside notice board");
 }
