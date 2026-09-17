@@ -131,7 +131,37 @@ private int ring_focus_ok(string file) {
     return 0;
 }
 
+// LCARS-MUD: live prompt system. Reads template from the "myprompt" env var
+// (set via "set prompt"), substitutes status variables, draws it after every
+// command. The driver's own "prompt" env stays empty so it never double-draws.
+void update_prompt() {
+    string p;
+    if (!interactive(this_object())) return;
+    p = (string)this_object()->getenv("myprompt");
+    if (p) p = replace_string(p, "%^RESET%^", "");
+    if (!p || p == "") p = "HP:$hp EP:$sp>";
+    p = replace_string(p, "$$", "\x01");
+    p = replace_string(p, "$hp", "" + (int)this_object()->query("hit_points"));
+    p = replace_string(p, "$HP", "" + (int)this_object()->query("max_hp"));
+    p = replace_string(p, "$sp", "" + (int)this_object()->query("spell_points"));
+    p = replace_string(p, "$SP", "" + (int)this_object()->query("max_sp"));
+    p = replace_string(p, "$me", (string)this_object()->query("cap_name"));
+    p = replace_string(p, "\x01", "$");
+    if (strlen(p) && p[<1] != ' ') p += " ";
+    message("prompt", p, this_object());
+    telnet_ga();
+}
+
+nomask protected int do_cmd_hook(string cmd);
+
 nomask protected int cmd_hook(string cmd) {
+    int r;
+    r = do_cmd_hook(cmd);
+    update_prompt();
+    return r;
+}
+
+nomask protected int do_cmd_hook(string cmd) {
     string file;
     string verb;
     int foo;

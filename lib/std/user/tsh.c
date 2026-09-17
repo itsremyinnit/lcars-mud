@@ -132,23 +132,11 @@ void initialize_tsh()
 
 string write_prompt(int silent)
 {
-    string p;
-    // LCARS-MUD: the driver calls this whenever it needs a prompt. Build live.
-    p = (string)this_object()->getenv("prompt");
-    if (p) p = replace_string(p, "%^RESET%^", "");
-    if (!p || p == "") p = "HP:$hp EP:$sp>";
-    p = replace_string(p, "$$", "\x01");
-    p = replace_string(p, "$hp", "" + (int)this_object()->query("hit_points"));
-    p = replace_string(p, "$HP", "" + (int)this_object()->query("max_hp"));
-    p = replace_string(p, "$sp", "" + (int)this_object()->query("spell_points"));
-    p = replace_string(p, "$SP", "" + (int)this_object()->query("max_sp"));
-    p = replace_string(p, "$me", (string)this_object()->query("cap_name"));
-    p = replace_string(p, "$D", tilde_path((string)this_object()->query("cwd"), 0));
-    p = replace_string(p, "$N", lower_case(mud_name()));
-    p = replace_string(p, "\x01", "$");
-    if (strlen(p) && p[<1] != ' ') p += " ";
-    if (!silent) message("prompt", p, this_player());
-    return p;
+    // LCARS-MUD: single prompt source is update_prompt() in user.c. When the
+    // driver asks for a prompt, draw the live one and return empty so nothing
+    // doubles up.
+    if (!silent) this_object()->update_prompt();
+    return "";
 } // write_prompt
 
 
