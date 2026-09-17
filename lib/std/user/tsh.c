@@ -23,7 +23,7 @@
 #include <tsh.h>
 #include <uid.h>
 
-#define DEFAULT_PROMPT "HP:%h EP:%s> "
+#define DEFAULT_PROMPT "HP:$hp EP:$sp> "
 #define MAX_HIST_SIZE  50
 #define MIN_HIST_SIZE  20
 #define MIN_PUSHD_SIZE 5
@@ -136,6 +136,7 @@ string write_prompt(int silent)
 
     // LCARS-MUD: read the env fresh each time so "set prompt" applies at once.
     prompt = (string)this_object()->getenv("prompt");
+    if (prompt) prompt = replace_string(prompt, "%^RESET%^", "");
     if (!prompt || prompt == "") prompt = DEFAULT_PROMPT;
 
     prompt = replace_string(prompt,"$D",
@@ -145,12 +146,11 @@ string write_prompt(int silent)
     prompt = replace_string(prompt,"$T",ctime(time())) ;
     prompt = replace_string(prompt,"$C",""+(query_cmd_num() + 1));
 
-    prompt = replace_string(prompt,"%h",""+(int)this_object()->query("hit_points"));
-    prompt = replace_string(prompt,"%H",""+(int)this_object()->query("max_hp"));
-    prompt = replace_string(prompt,"%s",""+(int)this_object()->query("spell_points"));
-    prompt = replace_string(prompt,"%S",""+(int)this_object()->query("max_sp"));
-    prompt = replace_string(prompt,"%n",(string)this_object()->query("cap_name"));
-    prompt = replace_string(prompt,"%%","%");
+    prompt = replace_string(prompt,"$hp",""+(int)this_object()->query("hit_points"));
+    prompt = replace_string(prompt,"$HP",""+(int)this_object()->query("max_hp"));
+    prompt = replace_string(prompt,"$sp",""+(int)this_object()->query("spell_points"));
+    prompt = replace_string(prompt,"$SP",""+(int)this_object()->query("max_sp"));
+    prompt = replace_string(prompt,"$me",(string)this_object()->query("cap_name"));
     if (strlen(prompt) && prompt[<1] != ' ') prompt += " ";
 
     if(!silent)
