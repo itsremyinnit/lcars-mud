@@ -1211,7 +1211,8 @@ protected varargs void complete_setup (string str) {
 
                 has_ring = 1;
 
-        if (!has_ring) {
+        if (query("nexus_ceremony")) "/d/Nexus/adm/ceremony_d"->resume(this_object());  // LCARS-MUD: ring ceremony
+        if (!has_ring && query("nexus_ceremony") != 1) {
 
             object ring = new("/d/Nexus/obj/calenmir");
 

@@ -94,6 +94,9 @@ int cmd_makewiz(string str) {
  
    //	Save updated user and connection data
  
+   //   LCARS-MUD: the ring ceremony, now or at next login
+   if (interactive(player)) "/d/Nexus/adm/ceremony_d"->begin(player);
+   else player->set("nexus_ceremony", 1);
    player->save_data();
    link->save_data();
    //   LCARS-MUD: create the new wizard's home directory
