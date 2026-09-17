@@ -23,7 +23,7 @@
 #include <tsh.h>
 #include <uid.h>
 
-#define DEFAULT_PROMPT "> "
+#define DEFAULT_PROMPT "HP:%h EP:%s> "
 #define MAX_HIST_SIZE  50
 #define MIN_HIST_SIZE  20
 #define MIN_PUSHD_SIZE 5
@@ -52,7 +52,7 @@ int do_new()
 
     tsh_prompt = (string)this_object()->getenv("prompt");
     tsh_prompt = !tsh_prompt ? DEFAULT_PROMPT : tsh_prompt + " ";
-    custom_prompt = (tsh_prompt != DEFAULT_PROMPT);
+    custom_prompt = 1;  // LCARS-MUD: always process, for %h-style vars in the default
 
     d1 = (string)this_object()->getenv("pushd");
     pushd_size = 0;
@@ -132,20 +132,27 @@ void initialize_tsh()
 
 string write_prompt(int silent)
 {
-    string path, prompt, tmp;
+    string prompt;
 
-    if (custom_prompt)
-    {
-	prompt = tsh_prompt;
-	prompt = replace_string(prompt,"$D",
-			tilde_path((string)this_object()->query("cwd"), 0));
-	prompt = replace_string(prompt,"\\n","\n");
-	prompt = replace_string(prompt,"$N",lower_case(mud_name()));
-	prompt = replace_string(prompt,"$T",ctime(time())) ;
-	prompt = replace_string(prompt,"$C",""+(query_cmd_num() + 1));
-    }
-    else
-	prompt = DEFAULT_PROMPT;
+    // LCARS-MUD: read the env fresh each time so "set prompt" applies at once.
+    prompt = (string)this_object()->getenv("prompt");
+    if (!prompt || prompt == "") prompt = DEFAULT_PROMPT;
+
+    prompt = replace_string(prompt,"$D",
+                    tilde_path((string)this_object()->query("cwd"), 0));
+    prompt = replace_string(prompt,"\\n","\n");
+    prompt = replace_string(prompt,"$N",lower_case(mud_name()));
+    prompt = replace_string(prompt,"$T",ctime(time())) ;
+    prompt = replace_string(prompt,"$C",""+(query_cmd_num() + 1));
+
+    prompt = replace_string(prompt,"%h",""+(int)this_object()->query("hit_points"));
+    prompt = replace_string(prompt,"%H",""+(int)this_object()->query("max_hp"));
+    prompt = replace_string(prompt,"%s",""+(int)this_object()->query("spell_points"));
+    prompt = replace_string(prompt,"%S",""+(int)this_object()->query("max_sp"));
+    prompt = replace_string(prompt,"%n",(string)this_object()->query("cap_name"));
+    prompt = replace_string(prompt,"%%","%");
+    if (strlen(prompt) && prompt[<1] != ' ') prompt += " ";
+
     if(!silent)
         message("prompt", prompt, this_player());
     return prompt;
