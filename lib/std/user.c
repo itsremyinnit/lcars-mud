@@ -1373,6 +1373,7 @@ void heart_beat() {
     age += (time() - query_temp("last_age_set"));
     set_temp("last_age_set", time());
     ob_data["age"] = age;
+    "/d/Nexus/adm/legend_d"->record(this_object());  // LCARS-MUD: refresh legend snapshot
 }
 
 

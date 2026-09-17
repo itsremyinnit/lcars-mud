@@ -14,8 +14,8 @@ inherit DAEMON;
 
 
 #define PLAYER_VALID ({ \
-    "mail_notification", "mail_entry_unread", "mail_no_cc" \
-     "prompt" \
+    "mail_notification", "mail_entry_unread", "mail_no_cc", \
+    "prompt", "INFO" \
 })
 
 nomask int valid_set(object them, string x)
@@ -76,6 +76,28 @@ int cmd_set(string arg)
       var == "MMIN" || var == "MMOUT" || var == "TITLE" || var == "prompt")
     val = val + "%^RESET%^";
   if (stringp(val)) val = replace_string(val,ESC, "Esc") ;
+    if (lower_case(var) == "title") var = "TITLE";
+    if (lower_case(var) == "info") var = "INFO";
+
+    // LCARS-MUD: TITLE and INFO rules
+    if (var == "TITLE" || var == "INFO") {
+        if (stringp(val) && strlen(val) > 60) {
+            printf("That's too long. Keep %s under 60 characters.\n", var);
+            return 1;
+        }
+        if (var == "TITLE" && stringp(val) && val != "") {
+            if (!act_ob->query("wizard")) {
+                printf("Only wizards may set a free TITLE. Yours shows as \"%s the <race>\".\n",
+                    capitalize((string)act_ob->query("name")));
+                return 1;
+            }
+            if (sizeof(explode(val, "$N")) - 1 != 1) {
+                printf("A wizard's TITLE must contain $N exactly once, marking where your\n"
+                    "name appears. Example: set TITLE Keeper $N of the Green Flame\n");
+                return 1;
+            }
+        }
+    }
     i = act_ob->set_env(var,val);
     if (var=="prompt") this_player()->do_new() ;
     printf("Variable %s: %s\n", (i ? "updated" : "added"), var);

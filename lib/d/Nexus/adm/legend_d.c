@@ -21,7 +21,7 @@ void clean_up() { }
 void record(object who) {
     string name;
     object link;
-    if (!who || previous_object() != who) return;
+    if (!who || !userp(who)) return;  // record only real players
     name = (string)who->query("name");
     if (!name) return;
     link = who->query_link();
@@ -35,6 +35,9 @@ void record(object who) {
         "mailhome" : who->getenv("MAILHOME"),
         "story"    : (file_size(user_path(name) + ".story") > 0) ? 1 : 0,
         "last_on"  : (link && link->query("last_on")) ? link->query("last_on") : time(),
+        "rname"    : link ? link->query("real_name") : 0,
+        "email"    : link ? link->query("email") : 0,
+        "host"     : link ? link->query("ip") : 0,
     ]);
     save_object(SAVE_FILE);
 }
@@ -65,6 +68,7 @@ string legend(string name, object viewer) {
     mapping d;
     string msg, cap, race, gender, title, info, mailhome, when, mailline, storyline;
     int wiz, online, is_admin, is_wiz, age;
+    string rn, em, ip, home;
 
     name = lower_case(name);
     live = find_player(name);
@@ -104,7 +108,7 @@ string legend(string name, object viewer) {
     } else {
         if (online) {
             int since = (link && link->query("last_on")) ? time() - (int)link->query("last_on") : 0;
-            when = "On for:  " + format_time(since, 1);
+            when = "On for:  " + format_time(since, 0);
         } else {
             int lo = live ? time() : (int)snap[name]["last_on"];
             when = "Last on: " + (lo ? ctime(lo)[4..9] + ctime(lo)[19..23] : "unknown");
@@ -112,21 +116,22 @@ string legend(string name, object viewer) {
         msg += sprintf("%-42sGender: %s\n", when, gender ? gender : "?");
     }
 
-    msg += sprintf("%-42sRank: %s\n", "Age: " + format_time(age, 1), rank_of(name, wiz));
+    msg += sprintf("%-42sRank: %s\n", "Age: " + format_time(age, 0), rank_of(name, wiz));
 
     mailline = field(mailhome) ? "Can be mailed: " + cap + "@" + mailhome : "";
     storyline = ((live && file_size(user_path(name) + ".story") > 0) ||
                  (!live && snap[name]["story"])) ? cap + " has recorded a life story." : "";
-    msg += sprintf("%-42s%s\n", mailline, storyline);
+    if (mailline != "" || storyline != "")
+        msg += sprintf("%-42s%s\n", mailline, storyline);
 
     if (field(info)) msg += "Info:  " + replace_string(info, "%^RESET%^", "") + "\n";
 
     if (is_wiz) {
-        string home = user_path(name);
+        home = user_path(name);
         msg += "----------------- wizard -----------------\n";
         msg += sprintf("Home: %-22sIdle: %s\n",
             (file_size(home) == -2 ? home : "(none)"),
-            online ? format_time(query_idle(live), 1) : "-");
+            online ? format_time(query_idle(live), 0) : "-");
         if (online && live->getenv("PLAN"))
             msg += "Plan: " + live->getenv("PLAN") + "\n";
     }
@@ -134,14 +139,17 @@ string legend(string name, object viewer) {
     if (is_admin) {
         msg += "----------------- admin ------------------\n";
         if (online && link) {
-            string rn = link->RNAME;
-            string em = link->query("email");
-            string ip = link->query("ip");
+            rn = link->query("real_name");
+            em = link->query("email");
+            ip = link->query("ip");
             msg += sprintf("Real name: %-18sEmail: %s\n",
                 (rn && rn != "") ? rn : "?", (em && em != "") ? em : "?");
             msg += "Host: " + ((ip && ip != "") ? ip : "?") + "\n";
-        } else {
-            msg += "Real name, email, and host: shown only while online.\n";
+        } else if (snap[name]) {
+            rn = snap[name]["rname"]; em = snap[name]["email"]; ip = snap[name]["host"];
+            msg += sprintf("Real name: %-18sEmail: %s\n",
+                (rn && rn != "") ? rn : "?", (em && em != "") ? em : "?");
+            msg += "Last host: " + ((ip && ip != "") ? ip : "?") + "\n";
         }
     }
     return msg;
