@@ -1,130 +1,86 @@
-//	File	: /cmds/adm/_banish.c
-//	Creator	: Buddha@TMI
-//	Updated	: Mobydick  (5/26/93)  Added rudimentary argument checking.
-//		  Karathan  (7/13/93)  Rewritten for unified banish code.
-//		  Karathan  (8/12/93)  Updated with banish daemon.
-
-// The command to banish or unbanish a site or name. Just an interface to the
-// banish daemon.  Command from Buddha, daemon from Dainia@Dreamshadow.
-
+// /cmds/adm/_banish.c: banish a character for 90 days. LCARS-MUD
+// The stock permanent name ban is now "banishname".
 #include <mudlib.h>
-#include <daemons.h>
-
+#include <uid.h>
 inherit DAEMON;
 
+#define SYNTAX   "Syntax: banish <player>\n"
+#define BANISH_D "/d/Nexus/adm/banish_d"
 
-int fail()
-{
-    notify_fail("Usage: banish <site [[-] site ip]|name [[-] name]>\n");
-    return 0;
+int cmd_banish(string str) {
+    object who;
+    string cap, art;
+
+    if (!adminp(geteuid(previous_object()))) {
+        write("Illegal attempt at banish by " + file_name(previous_object()) + "\n");
+        return 1;
+    }
+    seteuid(ROOT_UID);
+
+    notify_fail(SYNTAX);
+    if (!str || str == "") return 0;
+    str = lower_case(str);
+
+    if (!user_exists(str)) { write("Banish: No such player.\n"); return 1; }
+    if (adminp(str)) { write("Banish: " + capitalize(str) + " is an admin.\n"); return 1; }
+    if (BANISH_D->query_banished(str)) {
+        write("Banish: " + capitalize(str) + " is already banished.\n");
+        return 1;
+    }
+
+    write("Banish " + capitalize(str) + " for 90 days? [y/n] ");
+    input_to("confirm", 0, str);
+    return 1;
 }
 
+protected void confirm(string answer, string str) {
+    object who;
+    string cap = capitalize(str), art;
 
-int cmd_banish(string str)
-{
-    int i;
-    string *words;
-    mixed *sites, *names;
+    if (!answer || member_array(lower_case(answer), ({ "y", "yes" })) == -1) {
+        write("Banish: aborted.\n");
+        return;
+    }
+    seteuid(ROOT_UID);
 
-    if (!str || !stringp(str) || str == "")
-	return fail();
-    replace_string(str, "  ", " ", 0);
-    if (str == "")
-	return fail();
-    words = explode(lower_case(str), " ");
-    if (sizeof(words) < 1 || sizeof(words) > 3 ||
-	(sizeof(words) == 3 && words[1] != "-"))
-	return fail();
-    if (words[0] == "site" || words[0] == "sites")
-      { if (sizeof(words) == 1)
-	  { sites = BANISH_D->query_banished_sites();
-	    if (!sites || sites == ({ }))
-		write("There are no banished sites.\n");
-	    else
-	      { if (sizeof(sites) == 1)
-		    str = "There is one banished site: " + sites[0];
-	 else
-	     str = "There are " + sizeof(sites) + " banished sites: " +
-	    implode(sites[0..<2], ", ") + " and " +
-	    sites[<1];
-		write(wrap(str + ".\n")); }
-	    return 1; }
-    if (!adminp(geteuid(previous_object())))
-      { notify_fail("You are not permitted to use the banish command.\n");
-	return 0; }
-	if (sizeof(words) == 2)
-	  { i = BANISH_D->banish_site(words[1]);
-	    if (!i)
-		write("Banish site: Command failed.\n");
-	    else if (i < 0)
-		write("Site '" + words[1] +
-		      "' is already in the banish list.\n");
-	    else
-		write("Site '" + words[1] +
-		      "' has been added to the banish list.\n"); }
-	else
-	  { i = BANISH_D->remove_banished_site(words[2]);
-	    if (!i)
-		write("Banish site (removal): Command failed.\n");
-	    else if (i < 0)
-		write("Site '" + words[2] +
-		      "' is not in the banish list.\n");
-	    else
-		write("Site '" + words[2] +
-		      "' has been removed from the banish list.\n"); }
-	return 1; }
-    if (words[0] == "name" || words[0] == "names")
-      { if (sizeof(words) == 1)
-	  { names = BANISH_D->query_banished_names();
-	    if (!names || names == ({ }))
-		write("There are no banished names.\n");
-	    else
-	      { if (sizeof(names) == 1)
-		    str = "There is one banished name: " + names[0];
-	 else
-	     str = "There are " + sizeof(names) + " banished names: " +
-	    implode(names[0..<2], ", ") + " and " +
-	    names[<1];
-		write(wrap(str + ".\n")); }
-	    return 1; }
-    if (!adminp(geteuid(previous_object())))
-      { notify_fail("You are not permitted to use the banish command.\n");
-	return 0; }
-	if (sizeof(words) == 2)
-	  { i = BANISH_D->banish_name(words[1]);
-	    if (!i)
-		write("Banish name: Command failed.\n");
-	    else if (i < 0)
-		write("Name '" + words[1] +
-		      "' is already in the banish list.\n");
-	    else
-		write("Name '" + words[1] +
-		      "' has been added to the banish list.\n"); }
-	else
-	  { i = BANISH_D->remove_banished_name(words[2]);
-	    if (!i)
-		write("Banish name (removal): Command failed.\n");
-	    else if (i < 0)
-		write("Name '" + words[2] +
-		      "' is not in the banish list.\n");
-	    else
-		write("Name '" + words[2] +
-		      "' has been removed from the banish list.\n"); }
-	return 1; }
-    return fail();
+    if (wizardp(str)) "/cmds/adm/_unwiz"->cmd_unwiz(str);
+    BANISH_D->add_banish(str, (string)this_player()->query("name"));
+
+    art =
+"\n" +
+"                         .             *              .\n" +
+"              *                  _______________                  .\n" +
+"                     .         /|               |\\        *\n" +
+"                              / |   .       .   | \\\n" +
+"           .                 /  |       o       |  \\         .\n" +
+"                            |   |      /|\\      |   |\n" +
+"                *           |   |      / \\      |   |    *\n" +
+"                             \\  |               |  /\n" +
+"                  .           \\ |   .       .   | /           .\n" +
+"                               \\|_______________|/\n" +
+"                                 \\   \\  |  /   /\n" +
+"          *            .           \\  \\ | /  /          .\n" +
+"                                     \\ \\|/ /\n" +
+"                  .                    \\|/              *\n" +
+"                                        '\n" +
+"         Sealed in a spinning pane of crystal, a figure is hurled\n" +
+"               into the endless silence between the stars.\n\n" +
+"                 " + cap + " has been BANISHED.\n\n";
+
+    if (who = find_player(str)) {
+        tell_object(who, "\nThe air around you hardens into crystal, and the world falls away.\n");
+        shout(art, ({ who }));
+        tell_object(who, art);
+        who->save_data();
+        who->remove();
+    } else {
+        shout(art);
+    }
+    write("Banish: " + cap + " has been banished for 90 days.\n");
 }
 
-
-string help()
-{
-    return(
-"Usage: banish <site [[-] site ip]|name [[-] name]>\n"
-"The <site> string may be either an IP number of the form 123.123.123.123 or\n"
-"it may be a partial, such as 123.123, which banishes all sites whose root\n"
-"IP numbers starts with 123.123.  Guest logins are also site-checked.  The\n"
-"<name> string may include any regexp wildcards (eg, '.*fuck.*').  Preceding\n"
-"the site or name with a (space separated) '-' character will remove it from\n"
-"the relevant list.  With no name or site ip given, the full list is shown.\n"
-"NB To banish only \"at\" not \"cat\", \"satan\" & \"atan\", use \"^at$\".\n"+
-"\nSee also: nuke\n");
+string help() {
+    return SYNTAX + "\nParks a character for 90 days: login and re-creation are refused,\n" +
+           "finger shows the banishment, and on day 90 their data is archived.\n" +
+           "Use unbanish to reverse it. The permanent name ban is now 'banishname'.\n";
 }

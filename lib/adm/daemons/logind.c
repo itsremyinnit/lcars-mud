@@ -222,6 +222,14 @@ write(NO_NEW_USERS);
 	      "Is this really the name you wish to use? (y(es) or n(o)): ");
 	input_to("choice", 2, ob, str);
 	return; }
+
+    // LCARS-MUD: banished characters may not log in.
+    if ("/d/Nexus/adm/banish_d"->query_banished(str)) {
+        write("\n\n\t" + capitalize(str) + " was banished on " +
+              ctime("/d/Nexus/adm/banish_d"->query_banished_at(str)) + ".\n\n");
+        ob->remove_user();
+        return;
+    }
  
     seteuid(str);
     export_uid(ob);
@@ -498,7 +506,7 @@ protected void choice(string choice, object user, string name)
 //  If BANISHED_NAMES has been defined in /include/login.h, check with
 //  the banish daemon for use of a banished name.
 #ifdef BANISHED_NAMES
-    if (BANISH_D->check_banned_name(name))
+    if (BANISH_D->check_banned_name(name) || "/d/Nexus/adm/banish_d"->query_banished(name))
       { write("Sorry, that character name is restricted.\n\n" +
 	      LOGIN_PROMPT);
 	input_to("get_name", 2, user);

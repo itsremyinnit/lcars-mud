@@ -122,6 +122,10 @@ string finger_user(string who) {
     msg += sprintf("%-38s%-38s\n", "Directory: " + tmp1, tmp4);
 
     msg += "Status: ";
+    if ("/d/Nexus/adm/banish_d"->query_banished(who))  // LCARS-MUD
+        msg += "BANISHED on " + ctime("/d/Nexus/adm/banish_d"->query_banished_at(who)) +
+               " (released " + ctime("/d/Nexus/adm/banish_d"->query_expires(who))[4..10] + ")\n";
+    else
     if (adminp((string)link->query("name")))
         msg += "Admin\n";
     else if (link->query("wizard"))
