@@ -10,6 +10,8 @@ nomask object compile_object(string file)
 {
    string name, server;
 
+   if (file && strlen(file) && file[0] == '/') file = file[1..];  // LCARS-MUD: FluffOS passes a leading slash
+
    if (sscanf(file, "u/%*s/%s/%*s",name))
       server = user_path(name) + "virtual/server";
    else if (sscanf(file, "d/%s/%*s",name))
