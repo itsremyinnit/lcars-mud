@@ -1,9 +1,11 @@
 // /d/Nexus/adm/quarters_d.c: registry of wizard quarters, grants, and invites.
+// A removed wizard's slot becomes vacant (""), and the next promotion reuses it.
 #include <mudlib.h>
 inherit DAEMON;
 
 #define SAVE_FILE "/d/Nexus/data/quarters"
 #define INN       "/d/Nexus/rooms/inn"
+#define VACANT    ""
 
 string *roster;
 mapping grants;
@@ -19,13 +21,16 @@ void create() {
     invites = ([ ]);
 }
 
-int clean_up() { return 0; }  // keep invites in memory
+void clean_up() { }  // stay loaded so invites survive
 
 private int trusted_caller() {
     object po = previous_object();
-    if (this_player() && adminp(this_player())) return 1;
-    if (po && strsrch(file_name(po), "/cmds/adm/_makewiz") == 0) return 1;
-    return 0;
+    string f;
+    if (!po) return 0;
+    f = file_name(po);
+    return strsrch(f, "/cmds/adm/_makewiz") == 0 ||
+           strsrch(f, "/cmds/adm/_unwiz") == 0 ||
+           strsrch(f, "/cmds/adm/_banish") == 0;
 }
 
 private int from_quarters(string owner) {
@@ -34,39 +39,86 @@ private int from_quarters(string owner) {
            strsrch(file_name(po), "/d/Nexus/quarters/") == 0;
 }
 
-int query_index(string name) { return name ? member_array(lower_case(name), roster) + 1 : 0; }
+private int slot_index(string wing, int k) {
+    if (k < 1) return 0;
+    if (wing == "west") return 2 * k - 1;
+    if (wing == "east") return 2 * k;
+    return 0;
+}
+
+int query_index(string name) {
+    if (!name || name == VACANT) return 0;
+    return member_array(lower_case(name), roster) + 1;
+}
 string query_wing(string name) { int i = query_index(name); return i ? ((i % 2) ? "west" : "east") : 0; }
 int query_segment(string name) { int i = query_index(name); return i ? (i + 1) / 2 : 0; }
 string segment_path(string name) { return "/d/Nexus/wings/" + query_wing(name) + "_" + query_segment(name); }
 string *query_roster() { return copy(roster); }
 
-string owner_at(string wing, int k) {
-    int i;
-    if (k < 1) return 0;
-    if (wing == "west") i = 2 * k - 1;
-    else if (wing == "east") i = 2 * k;
-    else return 0;
-    return (i <= sizeof(roster)) ? roster[i - 1] : 0;
+int slot_exists(string wing, int k) {
+    int i = slot_index(wing, k);
+    return i && i <= sizeof(roster);
 }
 
-private void refresh_rooms(string name) {
+string owner_at(string wing, int k) {
+    int i = slot_index(wing, k);
+    if (!i || i > sizeof(roster) || roster[i - 1] == VACANT) return 0;
+    return roster[i - 1];
+}
+
+private void refresh_slot(string wing, int k) {
     object ob;
-    string wing = query_wing(name);
-    int k = query_segment(name);
-    if (k == 1) {
-        if (ob = find_object(INN)) ob->refresh_wings();
-    } else if (ob = find_object("/d/Nexus/wings/" + wing + "_" + (k - 1))) {
+    if (ob = find_object(INN)) ob->refresh_wings();
+    if (k > 1 && (ob = find_object("/d/Nexus/wings/" + wing + "_" + (k - 1))))
         ob->setup_segment(wing, k - 1, owner_at(wing, k - 1));
-    }
+    if (ob = find_object("/d/Nexus/wings/" + wing + "_" + k))
+        ob->setup_segment(wing, k, owner_at(wing, k));
 }
 
 int register_wizard(string name) {
+    int i;
     if (!trusted_caller() || !name) return 0;
     name = lower_case(name);
     if (member_array(name, roster) != -1) return 1;
-    roster += ({ name });
+    i = member_array(VACANT, roster);
+    if (i == -1) roster += ({ name });
+    else roster[i] = name;
     save_object(SAVE_FILE);
-    refresh_rooms(name);
+    refresh_slot(query_wing(name), query_segment(name));
+    return 1;
+}
+
+int vacate(string name) {
+    string wing, *keys_list;
+    int k, i;
+    object q, *inv;
+
+    if (!trusted_caller() || !name) return 0;
+    name = lower_case(name);
+    if (!query_index(name)) return 0;
+    wing = query_wing(name);
+    k = query_segment(name);
+
+    if (q = find_object("/d/Nexus/quarters/" + name)) {
+        inv = all_inventory(q);
+        for (i = 0; i < sizeof(inv); i++)
+            if (interactive(inv[i])) {
+                tell_object(inv[i], "The quarters around you fade gently away, and you find yourself on the Inn landing.\n");
+                inv[i]->move_player(INN, (string)inv[i]->query("cap_name") + " steps out onto the landing.");
+            }
+        destruct(q);
+    }
+
+    roster[query_index(name) - 1] = VACANT;
+    map_delete(grants, name);
+    keys_list = keys(grants);
+    for (i = 0; i < sizeof(keys_list); i++) grants[keys_list[i]] -= ({ name });
+    map_delete(invites, name);
+    keys_list = keys(invites);
+    for (i = 0; i < sizeof(keys_list); i++) invites[keys_list[i]] -= ({ name });
+
+    save_object(SAVE_FILE);
+    refresh_slot(wing, k);
     return 1;
 }
 

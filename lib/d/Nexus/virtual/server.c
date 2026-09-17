@@ -13,10 +13,9 @@ object compile_object(string file) {
     if (strlen(file) > 2 && file[<2..] == ".c") file = file[0..<3];
 
     if (sscanf(file, "d/Nexus/wings/%s_%d", wing, k) == 2) {
-        if ((wing != "west" && wing != "east") || !(name = (string)QUARTERS_D->owner_at(wing, k)))
-            return 0;
+        if ((wing != "west" && wing != "east") || !QUARTERS_D->slot_exists(wing, k)) return 0;
         ob = new("/d/Nexus/std/wing_segment");
-        ob->setup_segment(wing, k, name);
+        ob->setup_segment(wing, k, (string)QUARTERS_D->owner_at(wing, k));
         return ob;
     }
     if (sscanf(file, "d/Nexus/quarters/%s", name) == 1) {

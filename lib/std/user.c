@@ -1195,6 +1195,18 @@ protected varargs void complete_setup (string str) {
 
     debug("Complete_setup: Moving to the start location.\n");
 
+    // LCARS-MUD: a demoted player's ring departs at login.
+    if (!wizardp(this_object())) {
+        object *gone = all_inventory(this_object());
+        int g;
+        for (g = 0; g < sizeof(gone); g++)
+            if (base_name(gone[g]) == "/d/Nexus/obj/calenmir") {
+                if (gone[g]->query("equipped")) gone[g]->unequip(1);
+                destruct(gone[g]);
+                write("\nWhere Calenmîr once rested, there is only a faint warmth and the memory\n" +
+                      "of green light. It has gone to seek a new bearer.\n\n");
+            }
+    }
     // LCARS-MUD: wizards always carry their Calenmir. Autoload has already run by now.
 
     if (wizardp(this_object())) {

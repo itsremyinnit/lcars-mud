@@ -14,13 +14,19 @@ void setup_segment(string w, int k, string o) {
     wing = w; seg = k; owner = o;
     back = (w == "west") ? "east" : "west";
     view = (w == "west") ? "a sunset that never quite finishes" : "a sunrise that never quite begins";
-    rune = (string)NEXUS_RING->rune_for(o);
-    more = QUARTERS_D->owner_at(w, k + 1) ? 1 : 0;
+    more = QUARTERS_D->slot_exists(w, k + 1);
 
     text = "The Inn's corridor runs " + w + "ward here, its green runner soft underfoot " +
         "and its walls hung with small, mismatched paintings of places no one quite remembers " +
-        "visiting. Lamps turned low glow in sconces of hammered copper. On the north wall stands " +
-        "a door of dark wood, carved with " + rune + ", the mark of " + capitalize(o) + ". ";
+        "visiting. Lamps turned low glow in sconces of hammered copper. ";
+    if (o) {
+        rune = (string)NEXUS_RING->rune_for(o);
+        text += "On the north wall stands a door of dark wood, carved with " + rune +
+            ", the mark of " + capitalize(o) + ". ";
+    } else {
+        text += "On the north wall stands a door of pale, uncarved wood, closed and quiet, " +
+            "waiting for a name. ";
+    }
     if (more)
         text += "The corridor continues " + w + ", and leads back " + back + ".";
     else
@@ -30,16 +36,20 @@ void setup_segment(string w, int k, string o) {
     set("short", capitalize(w) + " Wing of the Inn");
     set("long", wrap(text));
     set("item_desc", ([
-        "door" : wrap("Dark wood, warm to the touch, carved with " + rune + ". It belongs to " +
-                      capitalize(o) + ".") ,
+        "door" : o ? wrap("Dark wood, warm to the touch, carved with " + rune + ". It belongs to " +
+                          capitalize(o) + ".")
+                   : "Pale wood, smooth and uncarved. Whoever will live here has not arrived yet.\n",
         "paintings" : "Small and mismatched. One shows a place that looks suspiciously like a school hallway.\n",
     ]));
     set("exits", ([
-        back    : (k == 1) ? "/d/Nexus/rooms/inn" : "/d/Nexus/wings/" + w + "_" + (k - 1),
-        "north" : "/d/Nexus/quarters/" + o,
+        back : (k == 1) ? "/d/Nexus/rooms/inn" : "/d/Nexus/wings/" + w + "_" + (k - 1),
     ]));
+    set("pre_exit_func", ([ ]));
+    if (o) {
+        set("exits/north", "/d/Nexus/quarters/" + o);
+        set("pre_exit_func/north", "try_door");
+    }
     if (more) set("exits/" + w, "/d/Nexus/wings/" + w + "_" + (k + 1));
-    set("pre_exit_func/north", "try_door");
 }
 
 int try_door() {

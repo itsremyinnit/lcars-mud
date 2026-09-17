@@ -6,8 +6,8 @@ inherit NEXUS_ROOM;
 
 void refresh_wings() {
     set("exits", ([ "down" : "/d/Nexus/rooms/kindled_hearth" ]));
-    if (QUARTERS_D->owner_at("west", 1)) set("exits/west", "/d/Nexus/wings/west_1");
-    if (QUARTERS_D->owner_at("east", 1)) set("exits/east", "/d/Nexus/wings/east_1");
+    if (QUARTERS_D->slot_exists("west", 1)) set("exits/west", "/d/Nexus/wings/west_1");
+    if (QUARTERS_D->slot_exists("east", 1)) set("exits/east", "/d/Nexus/wings/east_1");
 }
 
 void create() {
