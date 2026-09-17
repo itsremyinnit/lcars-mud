@@ -21,7 +21,7 @@ int cmd_unequip(string str) {
 		return 0 ;
 	}
 	Class = obj->query("armor") ;
-	if (!Class) {
+	if (undefinedp(obj->query("armor"))) {
 		notify_fail ("That isn't armor.\n") ;
 		return 0 ;
 	}
