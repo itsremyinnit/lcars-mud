@@ -1227,6 +1227,9 @@ protected varargs void complete_setup (string str) {
 
 
     temp = getenv("START");
+
+
+    if (!temp && wizardp(this_object())) temp = "/d/Nexus/rooms/threshold";  // LCARS-MUD
     if (!(temp && stringp(temp) && move(temp) == MOVE_OK)) {
         temp = query("start_location");
 #ifdef REAPPEAR_AT_QUIT
