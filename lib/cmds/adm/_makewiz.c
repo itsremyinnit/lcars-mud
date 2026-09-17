@@ -113,6 +113,7 @@ int cmd_makewiz(string str) {
    }
 
  
+   "/d/Nexus/adm/quarters_d"->register_wizard(str);  // LCARS-MUD: quarters in the Inn
    write("You have promoted " + capitalize(str) + " to wizard level.\n");
    write("Path now set to:\n   " + wrap(player->query("PATH")) + "\n");
  
