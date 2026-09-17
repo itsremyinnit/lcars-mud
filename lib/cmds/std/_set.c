@@ -15,7 +15,7 @@ inherit DAEMON;
 
 #define PLAYER_VALID ({ \
     "mail_notification", "mail_entry_unread", "mail_no_cc", \
-    "prompt", "INFO" \
+    "prompt", "INFO", "myprompt", "roomexits" \
 })
 
 nomask int valid_set(object them, string x)
@@ -76,6 +76,12 @@ int cmd_set(string arg)
       var == "MMIN" || var == "MMOUT" || var == "TITLE" || var == "prompt")
     val = val + "%^RESET%^";
   if (stringp(val)) val = replace_string(val,ESC, "Esc") ;
+    if (lower_case(var) == "prompt") {
+        act_ob->set_env("myprompt", val);
+        act_ob->set_env("prompt", 0);   // keep the driver from drawing a second one
+        printf("Prompt set.\n");
+        return 1;
+    }
     if (lower_case(var) == "title") var = "TITLE";
     if (lower_case(var) == "info") var = "INFO";
 
