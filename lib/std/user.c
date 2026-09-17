@@ -1195,6 +1195,37 @@ protected varargs void complete_setup (string str) {
 
     debug("Complete_setup: Moving to the start location.\n");
 
+    // LCARS-MUD: wizards always carry their Calenmir. Autoload has already run by now.
+
+    if (wizardp(this_object())) {
+
+        object *carried = all_inventory(this_object());
+
+        int i, has_ring;
+
+        for (i = 0; i < sizeof(carried); i++)
+
+            if (base_name(carried[i]) == "/d/Nexus/obj/calenmir" &&
+
+                carried[i]->query("owner") == query("name"))
+
+                has_ring = 1;
+
+        if (!has_ring) {
+
+            object ring = new("/d/Nexus/obj/calenmir");
+
+            if (ring && ring->move(this_object()) == MOVE_OK)
+
+                write("\nA green spark kindles in your palm, and Calenm\xc3\xaer takes shape around it,\n" +
+
+                      "stone and crystal and waiting flame.\n\n");
+
+        }
+
+    }
+
+
     temp = getenv("START");
     if (!(temp && stringp(temp) && move(temp) == MOVE_OK)) {
         temp = query("start_location");
