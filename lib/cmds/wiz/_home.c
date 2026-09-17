@@ -40,6 +40,9 @@ cmd_home( string pl_name ) {
     if( !home ) home = "workroom";
     home_dir = user_path( geteuid( this_player() ) );
     home = resolv_path( home_dir, home );
+    // LCARS-MUD: no personal home or workroom? The Nexus is home.
+    if (!this_player()->getenv("home") && !file_exists(home) && !file_exists(home + ".c"))
+      home = "/d/Nexus/rooms/threshold";
   }
     
   if(environment(this_player()) &&
