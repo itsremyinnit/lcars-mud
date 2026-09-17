@@ -89,113 +89,13 @@ private int viewer_admin() {
 }
 
 string finger_user(string who) {
-    object link;
-    mixed tmp1, tmp2, tmp3, tmp4, tmp5;
-    string msg;
-    mapping mail_stat;
-    int hibernate;
-
-    link = restore_data(who);
-    if (!link) {
-        if (sscanf(who, "(%s)", who))
-            return finger_group(who);
-        return "Finger: There is no such user.\n";
-    }
-
-    tmp1 = "Login name: " + who;
-    tmp2 = "In real life: ";
-    if (viewer_admin() && (tmp3 = (string)link->RNAME))
-        tmp2 += extract(tmp3, 0, 22);
-    else
-        tmp2 += "?";
-
-    tmp4 = DOMAIN_D->query_domain(link);
-    tmp5 = DOMAIN_D->query_domain_level(link);
-    if ((tmp4 == 0) || (tmp4 == ""))
-        tmp4 = "None";
-    tmp4 = "Domain: " + tmp4 + " (" + tmp5 + ")";
-
-    msg = sprintf("%-38s%-38s\n", tmp1, tmp2);
-    tmp1 = user_path(who);
-    if (file_size(tmp1) == -1)
-        tmp1 = "(none)";
-    msg += sprintf("%-38s%-38s\n", "Directory: " + tmp1, tmp4);
-
-    msg += "Status: ";
-    if ("/d/Nexus/adm/banish_d"->query_banished(who))  // LCARS-MUD
-        msg += "BANISHED on " + ctime("/d/Nexus/adm/banish_d"->query_banished_at(who)) +
-               (viewer_admin() ? " (released " + ctime("/d/Nexus/adm/banish_d"->query_expires(who))[4..10] + ")" : "") + "\n";
-    else
-    if (adminp((string)link->query("name")))
-        msg += "Admin\n";
-    else if (link->query("wizard"))
-        msg += "Wizard\n";
-    else
-        msg += "Player\n";
-
-    tmp1 = find_player(who);
-
-    hibernate = (int)link->query("hibernate");
-
-    if (hibernate && time() < hibernate)
-        msg += "\n\t[In hibernation until " + ctime(hibernate) + "]\n\n";
-
-    if (tmp1) {
-        if (!filter_users(tmp1))
-            tmp1 = 0;
-    }
-
-    if (!link->query("last_on"))
-        msg += (tmp1 ? "On since: " : "Last on: ") + "Unavailable\n";
-    else
-        msg += ((tmp1 && !tmp1->query("npc")) ? "On since: " : "Last on: ") +
-              ctime((int)link->query("last_on")) +
-              (viewer_admin() ? " from " + (string)link->query("ip") : "") + "\n";
-
-    if (tmp1) {
-        tmp1 = query_idle_string(tmp1, 1);
-        if (strlen(tmp1) > 0)
-            msg += tmp1 + "\n";
-    }
-
-    mail_stat = (mapping)MAILBOX_D->mail_status(who);
-    if (mail_stat["unread"])
-        msg += sprintf("%s has not read %d of their %d piece%s of mail.\n",
-              capitalize(who), mail_stat["unread"], mail_stat["total"],
-              (mail_stat["total"] == 1 ? "" : "s"));
-    else {
-	msg += "No unread mail" ;
-   if(this_player()) {
-	if (adminp(getuid(this_player()))) {
-	//  msg += " ("+mail_stat["total"]+" pieces)" ;
-	    msg += sprintf(" (%d piece%s)", mail_stat["total"], (mail_stat["total"] == 1 ? "" : "s"));
-	}
- }
-	msg += ".\n" ;
- }
-    tmp1 = (string)link->query("email");
-    if (viewer_admin())
-        msg += "Email address: " + tmp1 + "\n";
-
-    tmp1 = user_path(who) + ".project";
-    if (file_size(tmp1) >= 0)
-        msg += "Project: " + read_file(tmp1);
-
-    tmp1 = user_path(who) + ".plan";
-    if (file_size(tmp1) >= 0) {
-        msg += "Plan:\n" + read_file(tmp1);
-    } else {
-        msg += "No Plan.\n";
-    }
-
-    if (!find_player(who) || !interactive(find_player(who))) {
-        link->remove();
-        // Some names like .foo weren't getting away.
-        if(link) destruct(link);
-        if(link) log_file("fingerdest",sprintf("Connection of %s not dested by finger daemon, on %s.\n", link->query("name"), ctime(time())));
-    }
-
-    return "\n" + msg + "\n";
+    string card;
+    // LCARS-MUD: the legend card replaces the old finger layout.
+    card = (string)"/d/Nexus/adm/legend_d"->legend(who, this_player());
+    if (card) return card;
+    if (sscanf(who, "(%s)", who))
+        return finger_group(who);
+    return "Finger: There is no such user.\n";
 }
 
 string finger_group(string group) {
