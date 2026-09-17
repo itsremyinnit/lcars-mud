@@ -24,3 +24,21 @@ EndText
         "west" : "/d/Nexus/rooms/commons",
     ]));
 }
+
+void init() {
+    add_action("do_register", "register");
+}
+
+int do_register(string str) {
+    string home = (string)this_player()->getenv("MAILHOME");
+    if (home == "Nexus") {
+        write("The Rookery already holds your name. Letters find you here.\n");
+        return 1;
+    }
+    this_player()->set_env("MAILHOME", "Nexus");
+    this_player()->save_data();
+    write("You give your name to the sparrow, who repeats it back with grave importance\n" +
+          "and files it somewhere among the perches. Letters can now find you at the Nexus.\n");
+    say((string)this_player()->query("cap_name") + " registers with the Rookery.\n");
+    return 1;
+}
