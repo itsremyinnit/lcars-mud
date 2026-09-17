@@ -7,9 +7,9 @@
 inherit DAEMON;
 
 #define SAVE_FILE "/d/Nexus/data/banishments"
-#define DURATION  (90 * 86400)
+#define DEFAULT_DAYS 90
 
-mapping banished;   // name : ([ "at", "by" ])
+mapping banished;   // name : ([ "at", "by", "days" ])
 
 void create() {
     seteuid(ROOT_UID);
@@ -31,12 +31,19 @@ private int trusted_caller() {
 
 int query_banished(string name) { return name && mapp(banished[lower_case(name)]); }
 int query_banished_at(string name) { return query_banished(name) ? banished[lower_case(name)]["at"] : 0; }
-int query_expires(string name) { return query_banished(name) ? query_banished_at(name) + DURATION : 0; }
+int query_days(string name) {
+    int d;
+    if (!query_banished(name)) return 0;
+    d = banished[lower_case(name)]["days"];
+    return d > 0 ? d : DEFAULT_DAYS;
+}
+int query_expires(string name) { return query_banished(name) ? query_banished_at(name) + query_days(name) * 86400 : 0; }
 string *query_banished_names() { return keys(banished); }
 
-int add_banish(string name, string by) {
+int add_banish(string name, string by, int days) {
     if (!trusted_caller() || !name) return 0;
-    banished[lower_case(name)] = ([ "at" : time(), "by" : by ]);
+    if (days < 1) days = DEFAULT_DAYS;
+    banished[lower_case(name)] = ([ "at" : time(), "by" : by, "days" : days ]);
     save_object(SAVE_FILE);
     return 1;
 }
@@ -77,7 +84,7 @@ void sweep() {
 
     remove_call_out("sweep");
     for (i = 0; i < sizeof(names); i++) {
-        if (time() < banished[names[i]]["at"] + DURATION) continue;
+        if (time() < query_expires(names[i])) continue;
         archive_character(names[i]);
         map_delete(banished, names[i]);
         changed = 1;

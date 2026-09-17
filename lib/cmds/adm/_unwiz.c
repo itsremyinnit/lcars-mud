@@ -39,7 +39,8 @@ int cmd_unwiz(string str) {
     object player, link;
     int online;
 
-    if (!adminp(geteuid(previous_object()))) {
+    if (!adminp(geteuid(previous_object())) &&
+        strsrch(file_name(previous_object()), "/cmds/adm/_banish") != 0) {
         write("Illegal attempt at unwiz by " + file_name(previous_object()) + "\n");
         return 1;
     }
