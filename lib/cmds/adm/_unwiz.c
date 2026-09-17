@@ -87,6 +87,7 @@ int cmd_unwiz(string str) {
     if (player) {
         player->set("PATH", USER_CMDS);
         player->delete("nexus_ceremony");
+        if (!online) player->set("nexus_ring_departed", 1);  // LCARS-MUD: tell them at next login
     }
     QUARTERS_D->vacate(str);
 

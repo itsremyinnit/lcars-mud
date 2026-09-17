@@ -62,6 +62,7 @@ int cmd_makewiz(string str) {
  
    if(!link) {
    link = new(CONNECTION);
+   link->clear_euid();  // LCARS-MUD: lets export_uid() work on FluffOS
    seteuid(str);
    export_uid(link);
    seteuid(ROOT_UID);
