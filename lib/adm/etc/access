@@ -41,6 +41,7 @@
 (/d/std)	(all)[r]:(standard)[rw]:(adminaccess)[rw]
 (/d/TMI)	(all)[r]:(tmi)[rw]:(adminaccess)[rw]
 (/d/Fooland)	(all)[r]:(fooland)[rw]:(adminaccess)[rw]
+(/d/Nexus)      (all)[r]:(nexus)[rw]:(adminaccess)[rw]
 (/d/Conf)	(all)[r]:(conf)[rw]:(adminaccess)[rw]
 (/d/adm)	(all)[r]:(adm)[rw]:(adminaccess)[rw]
 (/d/lima/realtmi)    (all)[r]:(lima)[rw]:(adminaccess)[rw]
