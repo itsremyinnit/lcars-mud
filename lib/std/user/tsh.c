@@ -23,7 +23,7 @@
 #include <tsh.h>
 #include <uid.h>
 
-#define DEFAULT_PROMPT "HP:$hp EP:$sp> "
+#define DEFAULT_PROMPT "> "
 #define MAX_HIST_SIZE  50
 #define MIN_HIST_SIZE  20
 #define MIN_PUSHD_SIZE 5
@@ -52,7 +52,7 @@ int do_new()
 
     tsh_prompt = (string)this_object()->getenv("prompt");
     tsh_prompt = !tsh_prompt ? DEFAULT_PROMPT : tsh_prompt + " ";
-    custom_prompt = 1;  // LCARS-MUD: always process, for %h-style vars in the default
+    custom_prompt = (tsh_prompt != DEFAULT_PROMPT);
 
     d1 = (string)this_object()->getenv("pushd");
     pushd_size = 0;
@@ -132,27 +132,20 @@ void initialize_tsh()
 
 string write_prompt(int silent)
 {
-    string prompt;
+    string path, prompt, tmp;
 
-    // LCARS-MUD: read the env fresh each time so "set prompt" applies at once.
-    prompt = (string)this_object()->getenv("prompt");
-    if (prompt) prompt = replace_string(prompt, "%^RESET%^", "");
-    if (!prompt || prompt == "") prompt = DEFAULT_PROMPT;
-
-    prompt = replace_string(prompt,"$D",
-                    tilde_path((string)this_object()->query("cwd"), 0));
-    prompt = replace_string(prompt,"\\n","\n");
-    prompt = replace_string(prompt,"$N",lower_case(mud_name()));
-    prompt = replace_string(prompt,"$T",ctime(time())) ;
-    prompt = replace_string(prompt,"$C",""+(query_cmd_num() + 1));
-
-    prompt = replace_string(prompt,"$hp",""+(int)this_object()->query("hit_points"));
-    prompt = replace_string(prompt,"$HP",""+(int)this_object()->query("max_hp"));
-    prompt = replace_string(prompt,"$sp",""+(int)this_object()->query("spell_points"));
-    prompt = replace_string(prompt,"$SP",""+(int)this_object()->query("max_sp"));
-    prompt = replace_string(prompt,"$me",(string)this_object()->query("cap_name"));
-    if (strlen(prompt) && prompt[<1] != ' ') prompt += " ";
-
+    if (custom_prompt)
+    {
+	prompt = tsh_prompt;
+	prompt = replace_string(prompt,"$D",
+			tilde_path((string)this_object()->query("cwd"), 0));
+	prompt = replace_string(prompt,"\\n","\n");
+	prompt = replace_string(prompt,"$N",lower_case(mud_name()));
+	prompt = replace_string(prompt,"$T",ctime(time())) ;
+	prompt = replace_string(prompt,"$C",""+(query_cmd_num() + 1));
+    }
+    else
+	prompt = DEFAULT_PROMPT;
     if(!silent)
         message("prompt", prompt, this_player());
     return prompt;
@@ -161,6 +154,7 @@ string write_prompt(int silent)
 
 protected nomask string process_input(string arg)
 {
+    log_file("pi_debug", "process_input got: " + arg + "\n");  // LCARS-DEBUG
     int loop, num, macro;
 
     if (arg && arg != "")
@@ -180,6 +174,7 @@ protected nomask string process_input(string arg)
 	{
 		if(num > 10) {
 		write("Command macro increment too high.\n");
+		this_object()->update_prompt();  // LCARS-MUD
 		return ""; }
  
 	    for(loop=0; this_player() && loop < num; loop++)
@@ -188,13 +183,16 @@ protected nomask string process_input(string arg)
 		    write("Could not complete action. Command macro halted.\n");
 		    break;
 		}
+	    this_object()->update_prompt();  // LCARS-MUD
 	    return "";
 	}
     }
    if( strlen( arg ) > 5 && arg[0..5] == "passwd" ) {
       CMD_PASSWD -> cmd_passwd( (strlen( arg ) > 6 ? arg[7..<1] : 0) );
+      this_object()->update_prompt();  // LCARS-MUD
       return "";
    }
+    this_object()->update_prompt();  // LCARS-MUD
     return arg;
 } // process_input
 
