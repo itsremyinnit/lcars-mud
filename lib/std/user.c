@@ -152,16 +152,7 @@ void update_prompt() {
     telnet_ga();
 }
 
-nomask protected int do_cmd_hook(string cmd);
-
 nomask protected int cmd_hook(string cmd) {
-    int r;
-    r = do_cmd_hook(cmd);
-    update_prompt();
-    return r;
-}
-
-nomask protected int do_cmd_hook(string cmd) {
     string file;
     string verb;
     int foo;
