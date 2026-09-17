@@ -99,15 +99,17 @@ void journey(object who) {
         "\nThe instant the ring closes around your finger, Naurcalen roars awake. Green\n" +
         "fire races up your arm and through your chest, and the world around you\n" +
         "turns thin as paper, then thinner, then gone.\n\n");
-    who->move_player(BETWEEN, cap + " flares with green light, and is gone.");
-    call_out("beat", 4, who, 0);
+    if (environment(who))
+        tell_room(environment(who), cap + " flares with green light, and is gone.\n", ({ who }));
+    who->move(BETWEEN);  // silent: no room description in transit
+    call_out("beat", 8, who, 0);
 }
 
 void beat(object who, int n) {
     if (!who || !interactive(who)) return;
     if (n < sizeof(beats)) {
         tell_object(who, beats[n]);
-        call_out("beat", 4, who, n + 1);
+        call_out("beat", 8, who, n + 1);
         return;
     }
     tell_object(who, "\nThe light takes you in.\n\n");
