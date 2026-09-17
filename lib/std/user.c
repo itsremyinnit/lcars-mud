@@ -109,6 +109,28 @@ protected void init_commands() {
  * Setup standard user command hook system.  This system interfaces
  * with the cmd bin system, the environment's exits, and feeling entries.
  */
+// LCARS-MUD: wizard commands require the bearer's own worn Calenmir. Admins are exempt.
+private int ring_focus_ok(string file) {
+    string *gated = ({ "/cmds/object/", "/cmds/xtra/", "/cmds/file/", "/cmds/wiz/", "/cmds/adm/" });
+    object *inv;
+    int i, is_gated;
+
+    if (!file) return 1;
+    if (file[0] != '/') file = "/" + file;
+    for (i = 0; i < sizeof(gated); i++)
+        if (strsrch(file, gated[i]) == 0) is_gated = 1;
+    if (!is_gated) return 1;
+    if (adminp((string)query("name"))) return 1;
+
+    inv = all_inventory(this_object());
+    for (i = 0; i < sizeof(inv); i++)
+        if (base_name(inv[i]) == "/d/Nexus/obj/calenmir" &&
+            inv[i]->query("equipped") &&
+            inv[i]->query("owner") == query("name"))
+            return 1;
+    return 0;
+}
+
 nomask protected int cmd_hook(string cmd) {
     string file;
     string verb;
@@ -125,6 +147,14 @@ nomask protected int cmd_hook(string cmd) {
     file = (string)CMD_D->find_cmd(verb, explode(query("PATH"), ":"));
 
     if (file && file != "") {
+
+        if (!ring_focus_ok(file)) {
+
+            write("You reach for the power, but your will scatters like light through fog.\nYou need a focal point.\n");
+
+            return 1;
+
+        }
 #ifdef PROFILING
         before = rusage();
 #endif
