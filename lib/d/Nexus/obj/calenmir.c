@@ -59,6 +59,10 @@ int move(mixed dest) {
 }
 
 void kindle() {
+    if (environment() && (int)environment()->query("nexus_ceremony") == 2) {  // LCARS-MUD: first wearing
+        "/d/Nexus/adm/ceremony_d"->journey(environment());
+        return;
+    }
     write("Deep in the crystal, Naurcalen wakes. Green light seeps through the\n" +
           "cracks in the stone, and your thoughts feel suddenly, sharply focused.\n");
     say((string)this_player()->query("cap_name") + "'s stone ring kindles with a soft green light.\n");
