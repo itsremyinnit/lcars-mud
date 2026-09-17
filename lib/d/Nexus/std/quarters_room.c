@@ -42,7 +42,7 @@ void init() {
 void eject(object who) {
     if (!who || environment(who) != this_object()) return;
     tell_object(who, "The quarters gently decline to have you, and you find yourself back in the corridor.\n");
-    who->move_player((string)QUARTERS_D->segment_path(owner), "is shown back into the corridor");
+    who->move_player((string)QUARTERS_D->segment_path(owner), (string)who->query("cap_name") + " is shown back into the corridor");
 }
 
 int leaving() {
