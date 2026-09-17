@@ -252,29 +252,6 @@ nomask void disable_me() {
 		disable_wizard() ;
 }
 
-// LCARS-MUD: build and send this player's prompt. Called after each command.
-// Template variables: $hp $HP (hit/max hit points), $sp $SP (spell points),
-// $me (capitalized name), $$ (literal $). Set with: set prompt <template>
-nomask void update_prompt() {
-    string p;
-    if (!interactive(this_object())) return;
-    p = (string)this_object()->getenv("prompt");
-    if (p) p = replace_string(p, "%^RESET%^", "");
-    if (!p || p == "") p = "HP:$hp EP:$sp>";
-
-    p = replace_string(p, "$$", "\x01");   // protect literal $
-    p = replace_string(p, "$hp", "" + (int)query("hit_points"));
-    p = replace_string(p, "$HP", "" + (int)query("max_hp"));
-    p = replace_string(p, "$sp", "" + (int)query("spell_points"));
-    p = replace_string(p, "$SP", "" + (int)query("max_sp"));
-    p = replace_string(p, "$me", (string)query("cap_name"));
-    p = replace_string(p, "\x01", "$");
-    if (strlen(p) && p[<1] != ' ') p += " ";
-
-    message("prompt", p, this_object());
-    telnet_ga();
-}
-
 void receive_message(string Class, string msg) {
    object shell;
    string foo ;

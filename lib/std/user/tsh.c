@@ -154,7 +154,6 @@ string write_prompt(int silent)
 
 protected nomask string process_input(string arg)
 {
-    log_file("pi_debug", "process_input got: " + arg + "\n");  // LCARS-DEBUG
     int loop, num, macro;
 
     if (arg && arg != "")
@@ -174,7 +173,6 @@ protected nomask string process_input(string arg)
 	{
 		if(num > 10) {
 		write("Command macro increment too high.\n");
-		this_object()->update_prompt();  // LCARS-MUD
 		return ""; }
  
 	    for(loop=0; this_player() && loop < num; loop++)
@@ -183,16 +181,13 @@ protected nomask string process_input(string arg)
 		    write("Could not complete action. Command macro halted.\n");
 		    break;
 		}
-	    this_object()->update_prompt();  // LCARS-MUD
 	    return "";
 	}
     }
    if( strlen( arg ) > 5 && arg[0..5] == "passwd" ) {
       CMD_PASSWD -> cmd_passwd( (strlen( arg ) > 6 ? arg[7..<1] : 0) );
-      this_object()->update_prompt();  // LCARS-MUD
       return "";
    }
-    this_object()->update_prompt();  // LCARS-MUD
     return arg;
 } // process_input
 
