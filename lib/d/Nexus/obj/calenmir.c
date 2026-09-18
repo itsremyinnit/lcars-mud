@@ -46,7 +46,7 @@ void create() {
     set("unequip_func", "dim");
 }
 
-mixed query_auto_load() { return 1; }
+mixed query_auto_load() { return 0; }  // LCARS-MUD: re-forge on login is the single source, no autoload stacking
 
 int move(mixed dest) {
     int res;
