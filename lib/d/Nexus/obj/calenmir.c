@@ -42,6 +42,11 @@ void create() {
     set("armor", 0);
     set("type", "ring");
     set("prevent_drop", 1);
+    // LCARS-MUD: which corps this ring belongs to. NPCs read this
+    // through RING_D to decide how to treat the bearer. Wizard
+    // powers stay keyed to THIS ring specifically, not to "wearing
+    // a ring": a future yellow ring confers no wizardry.
+    set("corps", "green");
     set("equip_func", "kindle");
     set("unequip_func", "dim");
 }
