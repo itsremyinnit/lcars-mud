@@ -3,5 +3,5 @@
 #define AVAKUMA_H
 #define AVAKUMA_ROOM    "/d/Avakuma/std/avakuma_room"
 #define AVAKUMA_ZONE    "A"
-#define FRAMSBURG_BAR   "/d/Avakuma/framsburg/bar"
+#define FRAMSBURG_PUB   "/d/Avakuma/framsburg/pub"
 #endif
