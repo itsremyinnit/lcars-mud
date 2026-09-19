@@ -16,4 +16,5 @@ EndText
         "east" : "/d/Avakuma/orc/dirty_house",
         "south" : "/d/Avakuma/orc/dirty_room",
     ]));
+    set("exit_order", ({ "east", "south" }));
 }

@@ -13,4 +13,5 @@ EndText
     set("exits", ([
         "west" : "/d/Avakuma/framsburg/road_south",
     ]));
+    set("exit_order", ({ "west" }));
 }

@@ -20,4 +20,5 @@ EndText
         "west"  : "/d/Avakuma/framsburg/armoury_house",
         "south" : "/d/Avakuma/framsburg/road_south",
     ]));
+    set("exit_order", ({ "east", "north", "west", "south" }));
 }

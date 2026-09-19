@@ -15,4 +15,5 @@ EndText
         "north" : "/d/Avakuma/framsburg/barracks",
         "south" : "/d/Avakuma/framsburg/kitchen",
     ]));
+    set("exit_order", ({ "east", "north", "south" }));
 }

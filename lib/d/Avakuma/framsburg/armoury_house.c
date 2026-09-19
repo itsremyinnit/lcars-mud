@@ -15,4 +15,5 @@ EndText
         "west"  : "/d/Avakuma/framsburg/hospital",
         "wagon" : "/d/Avakuma/framsburg/armoury_wagon",
     ]));
+    set("exit_order", ({ "east", "west", "wagon" }));
 }

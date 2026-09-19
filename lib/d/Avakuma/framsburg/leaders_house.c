@@ -13,4 +13,5 @@ EndText
     set("exits", ([
         "east" : "/d/Avakuma/framsburg/kitchen",
     ]));
+    set("exit_order", ({ "east" }));
 }

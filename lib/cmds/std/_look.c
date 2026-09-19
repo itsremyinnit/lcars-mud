@@ -451,6 +451,25 @@ string join_and (string *list) {
   return sprintf ("%s and %s", implode (list[0..(n - 2)], ", "), list[n - 1]);
 }
 
+/* LCARS-MUD: order the displayed exit list by the room's "exit_order"
+   property when it sets one. keys() returns hash order, which is stable
+   per mapping but arbitrary, so rooms that care about the order of the
+   displayed list (captured areas, mainly) pin it explicitly. Directions
+   present in the room but absent from exit_order are appended in keys()
+   order, so a partial list is safe. */
+string *order_exits (string *dirs, mixed *order) {
+  string *out;
+  int i;
+
+  if (!pointerp (order))
+    return dirs;
+  out = ({ });
+  for (i = 0; i < sizeof (order); i++)
+    if (member_array (order[i], dirs) != -1)
+      out += ({ order[i] });
+  return out + (dirs - out);
+}
+
 string lit_room_description (object room, int infra, int flag) {
   string long, str, tmp, *dirs;
   object *contents, *live;
@@ -469,6 +488,7 @@ filtered exit list before the room name line is built. */
     dirs = exits ? keys (exits) : ({ });
     if (pointerp (suppress))
       dirs = filter_array (dirs, "suppress_filt", this_object(), suppress);
+    dirs = order_exits (dirs, room->query ("exit_order"));
   }
 
   brief_mode = (flag && viewingOb->query ("brief")) ? 1 : 0;

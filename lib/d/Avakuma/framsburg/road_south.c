@@ -17,4 +17,5 @@ EndText
         "west"  : "/d/Avakuma/framsburg/corner_house",
         "south" : "/d/Avakuma/framsburg/entrance",
     ]));
+    set("exit_order", ({ "east", "north", "west", "south" }));
 }

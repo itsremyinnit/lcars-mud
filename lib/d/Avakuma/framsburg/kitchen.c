@@ -15,4 +15,5 @@ EndText
         "north" : "/d/Avakuma/framsburg/hospital",
         "west"  : "/d/Avakuma/framsburg/leaders_house",
     ]));
+    set("exit_order", ({ "east", "north", "west" }));
 }

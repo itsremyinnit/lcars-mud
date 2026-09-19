@@ -17,6 +17,7 @@ EndText
     set("exits", ([
         "north" : "/d/Avakuma/framsburg/road_south",
     ]));
+    set("exit_order", ({ "north", "south" }));
     add_sealed("south",
         "The road runs on south out of Framsburg, but not yet.\n");
 }

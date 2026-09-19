@@ -14,4 +14,5 @@ EndText
     set("exits", ([
         "out" : "/d/Avakuma/framsburg/armoury_house",
     ]));
+    set("exit_order", ({ "out" }));
 }

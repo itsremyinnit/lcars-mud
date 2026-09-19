@@ -17,4 +17,5 @@ EndText
         "east" : "/d/Avakuma/framsburg/road_south",
         "west" : "/d/Avakuma/framsburg/kitchen",
     ]));
+    set("exit_order", ({ "east", "west" }));
 }

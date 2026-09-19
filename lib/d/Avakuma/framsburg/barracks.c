@@ -18,6 +18,7 @@ EndText
     set("exits", ([
         "south" : "/d/Avakuma/framsburg/hospital",
     ]));
+    set("exit_order", ({ "north", "south" }));
     add_sealed("north",
         "The door is locked.\n");
 }
