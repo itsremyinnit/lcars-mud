@@ -6,10 +6,40 @@ void create() {
     ::create();
     set("short", "A residential area");
     set("long", @EndText
-PLACEHOLDER. The soundest roof in Framsburg. The men use this ruin as
-a hospital of sorts.
+    This house has fared better than its neighbours. The roof is whole,
+without a hole in it, and it would turn rain as well as it ever did.
+The walls are another matter: enough of them have come down to leave
+the place open east, north and south. The men have made it their
+hospital, for want of anything better.
 EndText
     );
+    set("item_desc", ([
+        "roof" : @EndText
+    In very good shape, with no hole worth the name. It does not even
+creak when the wind comes up.
+EndText
+        ,
+        "walls" : @EndText
+    The southern and eastern walls have fallen. What is left of the
+others stands square and shows no sign of following them.
+EndText
+        ,
+        "rain" : @EndText
+    Not falling at the moment. When it does, this is the driest room in
+Framsburg.
+EndText
+        ,
+        "ruin" : @EndText
+    A house, once. It keeps the weather off the wounded, which is more
+than most of the town manages.
+EndText
+        ,
+        "hospital" : @EndText
+    Not a hospital so much as the soundest roof the men could find, with
+the hurt laid out beneath it.
+EndText
+        ,
+    ]));
     set("exits", ([
         "east"  : "/d/Avakuma/framsburg/armoury_house",
         "north" : "/d/Avakuma/framsburg/barracks",
