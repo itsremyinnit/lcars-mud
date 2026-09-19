@@ -528,15 +528,15 @@ name/description line for it to attach to. */
     i = sizeof (dirs);
     switch (i) {
       case 0:
-	long += ((infra) ? "\tYou cannot detect any obvious exits.\n"
-			 : "\tThere are no obvious exits.\n");
+	long += ((infra) ? "You cannot detect any obvious exits.\n"
+			 : "There are no obvious exits.\n");
 	break;
       case 1:
-	long = sprintf ("%s\tThe only obvious exit%s is %s.\n", long,
+	long = sprintf ("%sThe only obvious exit%s is %s.\n", long,
 		((infra) ? " you can detect" : ""), dirs[0]);
 	break;
       default:
-	long = sprintf ("%s\tThe only obvious exits%s are %s.\n", long,
+	long = sprintf ("%sThe only obvious exits%s are %s.\n", long,
 		((infra) ? " you can detect" : ""), join_and (dirs));
     }
   }
