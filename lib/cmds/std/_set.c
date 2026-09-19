@@ -15,7 +15,7 @@ inherit DAEMON;
 
 #define PLAYER_VALID ({ \
     "mail_notification", "mail_entry_unread", "mail_no_cc", \
-    "prompt", "INFO", "myprompt", "roomexits" \
+    "prompt", "INFO", "myprompt" \
 })
 
 nomask int valid_set(object them, string x)
@@ -102,18 +102,6 @@ int cmd_set(string arg)
                     "name appears. Example: set TITLE Keeper $N of the Green Flame\n");
                 return 1;
             }
-        }
-    }
-    if (lower_case(var) == "roomexits") {
-        var = "roomexits";
-        if (stringp(val)) val = lower_case(val);
-        if (val == "") val = "parens";
-        if (val != "parens" && val != "sentence" && val != "off") {
-            printf("roomexits must be one of: parens, sentence, off.\n"
-                "  parens   - (north, south, west)\n"
-                "  sentence - Obvious exits are north, south, and west.\n"
-                "  off      - don't list exits at all\n");
-            return 1;
         }
     }
     i = act_ob->set_env(var,val);

@@ -419,23 +419,75 @@ int suppress_filt (string exit, string *suppress) {
   return 0;
 }
 
+/* LCARS-MUD: abbreviate a compass direction for brief-mode exit lists.
+   Non-compass exits (doors, "in"/"out", named portals) are left as-is. */
+string abbreviate_exit (string dir) {
+  switch (dir) {
+    case "north":     return "n";
+    case "south":     return "s";
+    case "east":      return "e";
+    case "west":      return "w";
+    case "northeast": return "ne";
+    case "northwest": return "nw";
+    case "southeast": return "se";
+    case "southwest": return "sw";
+    case "up":        return "u";
+    case "down":      return "d";
+    default:          return dir;
+  }
+}
+
+/* LCARS-MUD: join a direction list T2T-style: "a, b and c" (no serial comma). */
+string join_and (string *list) {
+  int n;
+
+  n = sizeof (list);
+  if (!n)
+    return "";
+  if (n == 1)
+    return list[0];
+  if (n == 2)
+    return sprintf ("%s and %s", list[0], list[1]);
+  return sprintf ("%s and %s", implode (list[0..(n - 2)], ", "), list[n - 1]);
+}
+
 string lit_room_description (object room, int infra, int flag) {
   string long, str, tmp, *dirs;
   object *contents, *live;
-  int i;
+  int i, brief_mode;
   mixed *suppress;
   mapping exits, doors ;
-  string exitmode;
-   
+
+/* Query a room's "exit_suppress" property to see what, if any, obvious
+exits will be displayed at all. Computed up front: brief mode needs the
+filtered exit list before the room name line is built. */
+
+  dirs = ({ });
+  suppress = room->query ("exit_suppress");
+  if (!suppress || pointerp (suppress)) {
+    exits = room->query ("exits");
+    dirs = exits ? keys (exits) : ({ });
+    if (pointerp (suppress))
+      dirs = filter_array (dirs, "suppress_filt", this_object(), suppress);
+  }
+
+  brief_mode = (flag && viewingOb->query ("brief")) ? 1 : 0;
+
 /*  Check the player's "brief" property and get either the long or short
 description as is appropriate.  If infravision is being used, minimal
 details of the surroundings are given. */
-   
+
   if (infra)
     long = "";
   else
-    if (flag && viewingOb->query ("brief")) {
-      long = sprintf ("%s\n", room->query ("short"));
+    if (brief_mode) {
+      /* T2T brief mode: abbreviated exits in parens on the room name
+         line, no space before the paren. */
+      if (sizeof (dirs))
+        long = sprintf ("%s(%s)\n", room->query ("short"),
+                join_and (map_array (dirs, "abbreviate_exit", this_object())));
+      else
+        long = sprintf ("%s\n", room->query ("short"));
     } else {
 #ifdef LONG_WITH_SHORT
       long = sprintf ("%s\n%s", room->query ("short"), room->query ("long"));
@@ -456,77 +508,39 @@ and their statuses will be displayed in the room. */
   if (!suppress || pointerp (suppress)) {
     doors = room->query ("doors");
     if (doors && !infra) {
-      dirs = keys (doors);
+      string *door_dirs;
+      door_dirs = keys (doors);
       if (pointerp (suppress))
-	dirs = filter_array (dirs, "suppress_filt", this_object(), suppress);
-      i = sizeof (dirs);
+	door_dirs = filter_array (door_dirs, "suppress_filt", this_object(), suppress);
+      i = sizeof (door_dirs);
       while (i--)
-	long = sprintf ("%s The %s door is %s.\n", long, dirs[i],
-		doors[dirs[i]]["status"]);
+	long = sprintf ("%s The %s door is %s.\n", long, door_dirs[i],
+		doors[door_dirs[i]]["status"]);
     }
   }
- 
-/* Query a room's "exit_suppress" property to see what, if any, obvious
-exits will be displayed or not. */
 
-  suppress = room->query ("exit_suppress");
-  if (!suppress || pointerp (suppress)) {
-    exits = room->query ("exits");
-    if (exits)
-      dirs = keys (exits);
-    else
-      dirs = ({ });
-    if (pointerp (suppress))
-      dirs = filter_array (dirs, "suppress_filt", this_object(), suppress);
+/* T2T verbose mode: exits spelled out, flowing into the description as a
+sentence. Brief mode already folded the (abbreviated) exit list into the
+room name line above; infravision gets its own wording since there's no
+name/description line for it to attach to. */
+
+  if (!brief_mode || infra) {
     i = sizeof (dirs);
-
-    /* LCARS-MUD: "roomexits" env var picks the presentation.
-       parens (default) / sentence (stock TMI-2 prose) / off */
-    exitmode = viewingOb ? (string)viewingOb->query_env ("roomexits") : 0;
-    if (!stringp (exitmode) || exitmode == "")
-      exitmode = "parens";
-    exitmode = lower_case (exitmode);
-
-    switch (exitmode) {
-    case "off":
-      break;
-
-    case "sentence":
-      switch (i) {
-	case 0: {
-	  long += ((infra) ? "\tYou cannot detect any obvious exits.\n"
-			   : "\tThere are no obvious exits.\n");
-	  break;
-	}
-	case 1: {
-	  long = sprintf ("%s\tThe only obvious exit%s is %s.\n", long,
-		  ((infra) ? " you can detect" : ""), dirs[0]);
-	  break;
-	}
-	case 2: {
-	  long = sprintf ("%s\t%sbvious exits %sare %s and %s.\n", long,
-		  ((infra) ? "The only o" : "O"),
-		  ((infra) ? "you can detect " : ""), dirs[0], dirs[1]);
-	  break;
-	  }
-	default: {
-	  long = sprintf ("%s\t%sbvious exits %sare %s, and %s.\n", long,
-		  ((infra) ? "The only o" : "O"),
-		  ((infra) ? "you can detect " : ""),
-		  implode (dirs[0..(i-2)], ", "), dirs[i-1]);
-	  }
-	}
-      break;
-
-    default:   /* "parens" */
-      if (!i)
-	long += ((infra) ? "\t(no exits detected)\n" : "\t(no obvious exits)\n");
-      else
-	long = sprintf ("%s\t(%s)\n", long, implode (dirs, ", "));
-      break;
+    switch (i) {
+      case 0:
+	long += ((infra) ? "\tYou cannot detect any obvious exits.\n"
+			 : "\tThere are no obvious exits.\n");
+	break;
+      case 1:
+	long = sprintf ("%s\tThe only obvious exit%s is %s.\n", long,
+		((infra) ? " you can detect" : ""), dirs[0]);
+	break;
+      default:
+	long = sprintf ("%s\tThe only obvious exits%s are %s.\n", long,
+		((infra) ? " you can detect" : ""), join_and (dirs));
     }
   }
- 
+
 // Process inventory of the room/object being examined
   contents = all_inventory (room);
    

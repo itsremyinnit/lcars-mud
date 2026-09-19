@@ -37,7 +37,8 @@ Admin character: **Trelane**. GitHub: **itsremyinnit/lcars-mud** (private).
 
 **On the VM:**
 - Driver binary: `/opt/mud/bin/driver` (root-owned, `mud`-group, mode 750)
-- Mudlib: `/opt/mud/lib` (the git work tree)
+- Mudlib: **git work tree is `/opt/mud`** (NOT `/opt/mud/lib`); the lib itself lives at `/opt/mud/lib`. The git database is a **bare repo** at `/var/lib/mudgit/lcars-mud.git`, reachable only as the `mudgit` user. There is no `.git` dir inside `/opt/mud`, so `git rev-parse` from inside the tree returns nothing. Always drive git with the explicit form:
+  `sudo -u mudgit git --git-dir=/var/lib/mudgit/lcars-mud.git --work-tree=/opt/mud <cmd>`
 - Config: `/opt/mud/etc/config.tmi2` (root-owned; the running MUD can read, not write)
 - TLS certs: `/opt/mud/etc/tls/` (locked down; only `mud` can read the key, via ACL)
 - FluffOS source (for rebuilds): `~/src/fluffos` under `lcars_admin`
@@ -51,7 +52,8 @@ Admin character: **Trelane**. GitHub: **itsremyinnit/lcars-mud** (private).
 - **Two shells:** PowerShell on LCARS-SRV (Windows/Hyper-V/backup/cert tasks) and a bash SSH session on the VM. Always check the prompt before pasting; mixing them up is the #1 time-waster.
 - **Run as `mud` for lib files:** `sudo -u mud tee/sed/perl/python3 ...`. Files created as `lcars_admin` end up unreadable/unwritable in the wrong ways. Wildcards like `*.c` expand as `lcars_admin` **before** sudo runs, and `lcars_admin` can't read into `/opt/mud/lib`, so name files explicitly or run the whole command under `sudo`.
 - **Editing LPC:** change the file on disk, then `update /path/to/file` **in-game** (as Trelane) to recompile it live. Warnings are fine; `error:` is not. Errors get written to `/u/t/trelane/log` too.
-- **Git auto-sync:** a systemd timer commits in-game `ed` edits and pushes every 10 minutes. To push a change with a real message immediately, use the `mudgit` git wrapper (see any recent commit command in chat history) or just let the timer catch it.
+- **Git auto-sync:** a systemd timer commits in-game `ed` edits and pushes every 10 minutes. The repo uses the split git-dir/work-tree layout described in section 2: bare repo at `/var/lib/mudgit/lcars-mud.git`, work tree `/opt/mud`, run as `mudgit`. To push a change with a real message immediately: `(cd / && sudo -u mudgit git --git-dir=/var/lib/mudgit/lcars-mud.git --work-tree=/opt/mud add <paths> && ... commit -m "..." && ... push origin main)`. Never run bare `git` from inside `/opt/mud` expecting it to find a `.git`; there isn't one.
+- **Private repo caveat:** a fresh chat/session CANNOT read the GitHub repo (it's private, no connector). Keep `HANDOFF.md` in the claude.ai Project's knowledge, and hand a new session a **tarball of the relevant lib subtree** (code + config, never `.o` saves or logs) rather than a repo URL.
 - **Restart vs update:** most changes load with `update`. Things read only at boot need a service restart: **the master's groups/access files, the config file, and the preload list.** A restart saves players cleanly.
 - **Player saves survive restarts.** Runtime data (`.o` files, logs) is **not** in Git — it's covered by the nightly backup. Only code and config are tracked.
 - **Colors:** the mudlib uses `%^COLOR%^` codes (valid names in `/adm/daemons/terminal.c`), translated per-client on output to a **logged-in player**. Pre-login text (the welcome screen) has no player to translate, so it must use **raw ANSI escapes** instead.
@@ -97,7 +99,10 @@ All under `/d/Nexus/`. Wizards arrive at the **Threshold** on login; players sti
 
 ## 6. In flight / next up
 
-1. **Room exits in parentheses** — a `roomexits` setting (`parens` default / `sentence` / `off`) in `/cmds/std/_look.c`; the exact switch block is known. Not yet applied.
+1. **Room exits, T2T-style (two formats, keyed to brief/verbose mode)** — in `/cmds/std/_look.c`, add a `roomexits` player setting.
+   - **Brief mode:** exits appended to the room name line, abbreviated, in parens, **no space before the paren**: `The main street(n, e, s and w)`.
+   - **Verbose mode:** exits flow into the description as a full sentence, spelled out: `The only obvious exits are north, east, south and west.` (Current stock code already does a sentence form but tab-indented and worded slightly differently; match the T2T wording.)
+   - So it is NOT parens-vs-sentence; it is brief-gets-parens, verbose-gets-sentence. Jeremy confirmed this against a live T2T session. The exact switch block in `_look.c` is known.
 2. **The Lobby description** — the placeholder room beyond the Bell Arch, to be replaced with the real high school lobby once Jeremy has photos.
 3. **Bring Jarrod in as co-wizard/builder** — `mailreg jarrod` to register his name, deliver a starter password separately, and a short "how to connect" note (Mudlet on 5556, or the web client on 5557). Then `makewiz jarrod` for the full ring ceremony, and add `jarrod` to the Nexus `builders` group so he can build alongside Jeremy.
 4. **Optional later:** working shop/inn systems, the Proving Ground training construct, the recharge ceremony for the ring (original oath, not the GL/One-Ring text), IPv6, the FTP-vs-Git decision revisited.
