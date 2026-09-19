@@ -15,6 +15,7 @@
 #include "/d/Avakuma/avakuma.h"
 
 inherit ROOM;
+inherit DOORS;
 
 mapping sealed_exits;
 
