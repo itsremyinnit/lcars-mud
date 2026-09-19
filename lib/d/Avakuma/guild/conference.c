@@ -69,4 +69,5 @@ EndText
     ]));
     set("exit_order", ({ "west" }));
     create_door("west", "east", "A heavy door", "closed");
+    call_other("/d/Avakuma/guild/boards/wanted_poster", "???");
 }

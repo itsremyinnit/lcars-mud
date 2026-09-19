@@ -75,6 +75,7 @@
 #include <daemons.h>
 #include <mailer.h>
 #include <board.h>
+#include <driver/localtime.h>
 
 inherit OBJECT;
 
@@ -245,7 +246,14 @@ int convert_id( int idx ) {
 string
 get_time(int t)
 {
-    return extract(ctime(t), 0, 9);
+    int *lt;
+
+    // LCARS-MUD: MM/DD/YY HH:MM rather than the stock "Wed Jun 30", so
+    // archived posts keep a date precise enough to be worth keeping.
+    lt = localtime(t);
+    return sprintf("%02d/%02d/%02d %02d:%02d",
+                   lt[LT_MON] + 1, lt[LT_MDAY], lt[LT_YEAR] % 100,
+                   lt[LT_HOUR], lt[LT_MIN]);
 }
 
 string
