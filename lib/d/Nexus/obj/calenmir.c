@@ -74,6 +74,22 @@ void dim() {
 
 void init() {
     add_action("do_ask", "ask");
+    add_action("do_recall", "recall");
+}
+
+// The ring carries its bearer back to the Threshold from anywhere outside
+// the Nexus. Must be worn, and must be theirs.
+int do_recall(string str) {
+    if (environment() != this_player()) return 0;
+    if (!query("equipped")) {
+        notify_fail("You are carrying Calenmir, but not wearing it.\n");
+        return 0;
+    }
+    if (query("owner") != this_player()->query("name")) {
+        notify_fail("The ring does not answer to your hand.\n");
+        return 0;
+    }
+    return (int)"/d/Nexus/adm/recall_d"->begin(this_player());
 }
 
 string answer(string t) {

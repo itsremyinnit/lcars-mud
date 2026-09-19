@@ -30,9 +30,11 @@ int has_focus(object who) {
 
 // sigil: how the arch is named in messages, e.g. "the Bell Arch"
 // sealed: if set, the arch refuses everyone with this message
-varargs void add_arch(string dir, string dest, string sigil, string sealed) {
+varargs void add_arch(string dir, string dest, string sigil, string sealed,
+                      string passage) {
     set("exits/" + dir, dest);
-    set("arches/" + dir, ([ "sigil" : sigil, "sealed" : sealed ]));
+    set("arches/" + dir, ([ "sigil" : sigil, "sealed" : sealed,
+                            "passage" : passage ]));
     set("pre_exit_func/" + dir, "arch_" + dir);
 }
 
@@ -54,7 +56,10 @@ int check_arch(string dir) {
                   "a stone, and you find yourself where you began.\n");
         return 1;
     }
-    write("Calenmîr kindles as you pass beneath " + arch["sigil"] + ".\n");
+    if (arch["passage"])
+        write(arch["passage"]);
+    else
+        write("Calenmîr kindles as you pass beneath " + arch["sigil"] + ".\n");
     return 0;
 }
 

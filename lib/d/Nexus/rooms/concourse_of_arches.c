@@ -24,7 +24,12 @@ EndText
         "north" : "/d/Nexus/rooms/far_concourse",
     ]));
     add_arch("east", "/d/Nexus/realms/bell/lobby", "the Bell Arch");
-    add_arch("west", "/d/Nexus/realms/towers/landing", "the Two Towers Arch",
-        "The cold wind rises to meet you, and for a moment you glimpse two towers against\n" +
-        "a darkening sky. Then the arch is only stone again. Not yet.");
+    // Opens onto Framsburg, in the Avakuma domain. One-way by design: the
+    // pub has no arch on its side, and the ring's recall is the way back.
+    add_arch("west", "/d/Avakuma/framsburg/pub", "the Two Towers Arch", 0,
+        "The cold wind rises to meet you, and the stone under the two carved towers\n" +
+        "turns to ink. It does not reflect you. You step into it and it closes over\n" +
+        "your head like water, thick and lightless and utterly silent, and for a\n" +
+        "long moment there is nothing at all.\n\n" +
+        "Then air. Cold, and smelling of wet ash and old rain.\n\n");
 }
