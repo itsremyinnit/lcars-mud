@@ -425,6 +425,7 @@ string lit_room_description (object room, int infra, int flag) {
   int i;
   mixed *suppress;
   mapping exits, doors ;
+  string exitmode;
    
 /*  Check the player's "brief" property and get either the long or short
 description as is appropriate.  If infravision is being used, minimal
@@ -473,33 +474,57 @@ exits will be displayed or not. */
     exits = room->query ("exits");
     if (exits)
       dirs = keys (exits);
+    else
+      dirs = ({ });
     if (pointerp (suppress))
       dirs = filter_array (dirs, "suppress_filt", this_object(), suppress);
     i = sizeof (dirs);
-    switch (i) {
-      case 0: {
-	long += ((infra) ? "\tYou cannot detect any obvious exits.\n"
-			 : "\tThere are no obvious exits.\n");
-	break;
-      }
-      case 1: {
-	long = sprintf ("%s\tThe only obvious exit%s is %s.\n", long,
-		((infra) ? " you can detect" : ""), dirs[0]);
-	break;
-      }
-      case 2: {
-	long = sprintf ("%s\t%sbvious exits %sare %s and %s.\n", long,
-		((infra) ? "The only o" : "O"),
-		((infra) ? "you can detect " : ""), dirs[0], dirs[1]);
-	break;
+
+    /* LCARS-MUD: "roomexits" env var picks the presentation.
+       parens (default) / sentence (stock TMI-2 prose) / off */
+    exitmode = viewingOb ? (string)viewingOb->query_env ("roomexits") : 0;
+    if (!stringp (exitmode) || exitmode == "")
+      exitmode = "parens";
+    exitmode = lower_case (exitmode);
+
+    switch (exitmode) {
+    case "off":
+      break;
+
+    case "sentence":
+      switch (i) {
+	case 0: {
+	  long += ((infra) ? "\tYou cannot detect any obvious exits.\n"
+			   : "\tThere are no obvious exits.\n");
+	  break;
 	}
-      default: {
-	long = sprintf ("%s\t%sbvious exits %sare %s, and %s.\n", long,
-		((infra) ? "The only o" : "O"),
-		((infra) ? "you can detect " : ""),
-		implode (dirs[0..(i-2)], ", "), dirs[i-1]);
+	case 1: {
+	  long = sprintf ("%s\tThe only obvious exit%s is %s.\n", long,
+		  ((infra) ? " you can detect" : ""), dirs[0]);
+	  break;
 	}
-      }
+	case 2: {
+	  long = sprintf ("%s\t%sbvious exits %sare %s and %s.\n", long,
+		  ((infra) ? "The only o" : "O"),
+		  ((infra) ? "you can detect " : ""), dirs[0], dirs[1]);
+	  break;
+	  }
+	default: {
+	  long = sprintf ("%s\t%sbvious exits %sare %s, and %s.\n", long,
+		  ((infra) ? "The only o" : "O"),
+		  ((infra) ? "you can detect " : ""),
+		  implode (dirs[0..(i-2)], ", "), dirs[i-1]);
+	  }
+	}
+      break;
+
+    default:   /* "parens" */
+      if (!i)
+	long += ((infra) ? "\t(no exits detected)\n" : "\t(no obvious exits)\n");
+      else
+	long = sprintf ("%s\t(%s)\n", long, implode (dirs, ", "));
+      break;
+    }
   }
  
 // Process inventory of the room/object being examined

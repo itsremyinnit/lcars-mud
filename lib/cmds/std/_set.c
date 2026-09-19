@@ -104,6 +104,18 @@ int cmd_set(string arg)
             }
         }
     }
+    if (lower_case(var) == "roomexits") {
+        var = "roomexits";
+        if (stringp(val)) val = lower_case(val);
+        if (val == "") val = "parens";
+        if (val != "parens" && val != "sentence" && val != "off") {
+            printf("roomexits must be one of: parens, sentence, off.\n"
+                "  parens   - (north, south, west)\n"
+                "  sentence - Obvious exits are north, south, and west.\n"
+                "  off      - don't list exits at all\n");
+            return 1;
+        }
+    }
     i = act_ob->set_env(var,val);
     if (var=="prompt") this_player()->do_new() ;
     printf("Variable %s: %s\n", (i ? "updated" : "added"), var);
