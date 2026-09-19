@@ -963,6 +963,17 @@ varargs int quit(string str) {
 #endif
 
     /*
+     * LCARS-MUD: remove() does this, but quit() never called remove(), so
+     * bound items (prevent_drop) were still carried when ob_logic::remove()
+     * tried to push inventory into the room. Their move() refuses, and the
+     * player got "An object vanishes. Tell a wiz!" on every logout.
+     */
+    inv = all_inventory(this_object());
+    for (i = sizeof(inv); i--; )
+        if (inv[i]->query("prevent_drop"))
+            inv[i]->remove();
+
+    /*
      * Clean up a few loose ends before shutting down the user.
      */
 //  CMWHO_D->remove_user(this_object());

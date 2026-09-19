@@ -97,7 +97,7 @@
  
 //  Mudlib definable locations
  
-#define START		"/d/TMI/rooms/quad"
+#define START		"/d/Avakuma/framsburg/entrance"
 #define VOID		"/d/std/void"
 
 // Note: some people may dislike the block_attack() system during combat...
@@ -134,3 +134,6 @@
 #define LOCAL_TIME_ZONE 1
 
 #endif /* __CONFIG_H */
+
+// LCARS-MUD: skip the "[Press ENTER to continue]" prompt after the news.
+#define NO_LOGIN_PAUSE

@@ -58,6 +58,27 @@ int move(mixed dest) {
     return res;
 }
 
+// Called when the bearer leaves the world (quit, or being destructed).
+// The ring is not dropped and not kept: it returns to the green fire, and
+// the login re-forge brings it back.
+int remove() {
+    object who;
+
+    who = environment();
+    if (who && interactive(who)) {
+        tell_object(who,
+            "\nNaurcalen gutters low, and the stone loosens on your hand. The ring\n"
+            "lifts away of its own accord, comes apart into a drift of green sparks,\n"
+            "and goes back to the fire it was struck from. It will find you again.\n");
+        if (environment(who))
+            tell_room(environment(who),
+                (string)who->query("cap_name") +
+                "'s stone ring comes apart into green sparks and is gone.\n",
+                ({ who }));
+    }
+    return ::remove();
+}
+
 void kindle() {
     if (environment() && (int)environment()->query("nexus_ceremony") == 2) {  // LCARS-MUD: first wearing
         "/d/Nexus/adm/ceremony_d"->journey(environment());
