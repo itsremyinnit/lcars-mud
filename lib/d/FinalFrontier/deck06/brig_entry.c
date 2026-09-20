@@ -41,8 +41,8 @@ EndText
         "terminal" : "    Logged in, screen active, with a report open on it.\n",
     ]));
     set("exits", ([
-        "east"  : "/d/FinalFrontier/deck06/corridor_aft",
+        "out"   : "/d/FinalFrontier/deck06/corridor_aft",
         "cells" : "/d/FinalFrontier/deck06/brig_cells",
     ]));
-    set("exit_order", ({ "east", "cells" }));
+    set("exit_order", ({ "out", "cells" }));
 }

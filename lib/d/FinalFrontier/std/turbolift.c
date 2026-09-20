@@ -1,28 +1,32 @@
 // /d/FinalFrontier/std/turbolift.c
-// The spine. One car, many stops.
+// The spine, and the lateral runs.
 //
-// You do not walk out of a turbolift into a corridor; you tell it where
-// you want to go. "bridge", "engineering", "ten-forward" and so on, or
-// "deck 8". "stops" lists them. The car reports the deck it is on, which
-// changes as you travel, so the room's short is dynamic.
+// Turbolifts on this ship move sideways as well as up, so a destination
+// is a place rather than a deck. Say a name ("engineering", "brig",
+// "ten-forward") or a deck with an optional section ("deck 6",
+// "deck 6 aft"). "stops" lists everything.
 //
-// Every destination is a room that has its own exit back into the lift,
-// so the lift is a hub rather than a corridor. New decks only need a line
-// in STOPS and a room with a "lift" exit.
+// A deck with more than one lift simply has more than one entry. There is
+// no primary lift per deck: the car goes where you ask.
+//
+// Adding a stop: one line in STOPS, one add_action for its name if it has
+// a one-word one, and a room with an exit back into a lift.
 
 #include <mudlib.h>
 #include "/d/FinalFrontier/frontier.h"
 
 inherit FF_ROOM;
 
+// name : ({ deck, section, path, description })
 #define STOPS ([ \
-  "bridge"       : ({  1, "/d/FinalFrontier/deck01/bridge",           "Main Bridge" }), \
-  "security"     : ({  6, "/d/FinalFrontier/deck06/corridor_fore",    "Security and Transporters" }), \
-  "quarters"     : ({  8, "/d/FinalFrontier/deck08/corridor_fore",    "Officers' Quarters" }), \
-  "ten-forward"  : ({ 10, "/d/FinalFrontier/deck10/ten_forward",      "Ten-Forward" }), \
-  "sickbay"      : ({ 12, "/d/FinalFrontier/deck12/sickbay",          "Sickbay" }), \
-  "holodecks"    : ({ 11, "/d/FinalFrontier/deck11/corridor",         "Holodecks and Arboretum" }), \
-  "engineering"  : ({ 36, "/d/FinalFrontier/deck36/engineering",      "Main Engineering" }), \
+  "bridge"      : ({  1, "",     "/d/FinalFrontier/deck01/bridge",            "Main Bridge" }), \
+  "transporter" : ({  6, "fore", "/d/FinalFrontier/deck06/corridor_fore",     "Transporter Room Three" }), \
+  "brig"        : ({  6, "aft",  "/d/FinalFrontier/deck06/corridor_port_aft", "Security and Cargo" }), \
+  "quarters"    : ({  8, "fore", "/d/FinalFrontier/deck08/corridor_fore",     "Officers' Quarters" }), \
+  "ten-forward" : ({ 10, "fore", "/d/FinalFrontier/deck10/corridor_ten",      "Ten-Forward" }), \
+  "holodecks"   : ({ 11, "",     "/d/FinalFrontier/deck11/corridor",          "Holodecks and Arboretum" }), \
+  "sickbay"     : ({ 12, "",     "/d/FinalFrontier/deck12/sickbay",           "Sickbay" }), \
+  "engineering" : ({ 36, "",     "/d/FinalFrontier/deck36/engineering",       "Main Engineering" }), \
 ])
 
 void create() {
@@ -35,7 +39,7 @@ buttons anywhere. A single black handle rises from the wall beside the
 door, and the computer waits with the particular patience of something
 that has never once been in a hurry.
 
-    Say where you want to go. "stops" will list them.
+    Say where you want to go, or name a deck. "stops" will list them.
 EndText
     );
     set("item_desc", ([
@@ -56,16 +60,16 @@ EndText
 }
 
 void init() {
-    // No ::init() here: ROOM defines none.
     add_action("do_stops", "stops");
+    add_action("do_deck", "deck");
     add_action("do_go_to", "bridge");
+    add_action("do_go_to", "transporter");
+    add_action("do_go_to", "brig");
     add_action("do_go_to", "quarters");
     add_action("do_go_to", "ten-forward");
-    add_action("do_go_to", "sickbay");
-    add_action("do_go_to", "security");
     add_action("do_go_to", "holodecks");
+    add_action("do_go_to", "sickbay");
     add_action("do_go_to", "engineering");
-    add_action("do_deck", "deck");
 }
 
 int do_stops(string str) {
@@ -79,8 +83,10 @@ int do_stops(string str) {
     write("The computer offers, without being asked twice:\n");
     for (i = 0; i < sizeof(names); i++) {
         stop = stops[names[i]];
-        write(sprintf("  %-14s deck %2d   %s\n", names[i], stop[0], stop[2]));
+        write(sprintf("  %-13s deck %2d %-5s %s\n",
+              names[i], stop[0], stop[1], stop[3]));
     }
+    write("You may also say a deck, with a section: \"deck 6 aft\".\n");
     return 1;
 }
 
@@ -88,9 +94,13 @@ private int travel(mixed *stop) {
     object who, dest;
 
     who = this_player();
-    dest = find_object_or_load(stop[1]);
+    dest = find_object_or_load(stop[2]);
     if (!dest) {
-        write("The computer says: That deck is not accepting arrivals.\n");
+        write("The computer says: That destination is not accepting arrivals.\n");
+        return 1;
+    }
+    if (dest == environment(who)) {
+        write("The computer says: You are there.\n");
         return 1;
     }
 
@@ -101,7 +111,6 @@ private int travel(mixed *stop) {
     return 1;
 }
 
-// "bridge", "engineering" and so on, said as bare commands.
 int do_go_to(string str) {
     mapping stops;
     string verb;
@@ -112,22 +121,47 @@ int do_go_to(string str) {
     return travel(stops[verb]);
 }
 
-// "deck 8"
+// "deck 6", "deck 6 aft", "deck six" is not supported and never will be.
 int do_deck(string str) {
     mapping stops;
-    string *names;
-    int i, n;
+    string *names, section;
+    int i, n, matches, found;
 
-    if (!str || sscanf(str, "%d", n) != 1) {
+    if (!str) {
         notify_fail("The computer says: Which deck?\n");
         return 0;
     }
+    section = "";
+    if (sscanf(str, "%d %s", n, section) != 2 &&
+        sscanf(str, "%d", n) != 1) {
+        notify_fail("The computer says: Which deck?\n");
+        return 0;
+    }
+
     stops = STOPS;
     names = keys(stops);
-    for (i = 0; i < sizeof(names); i++)
-        if (stops[names[i]][0] == n) return travel(stops[names[i]]);
+    matches = 0;
+    found = -1;
+    for (i = 0; i < sizeof(names); i++) {
+        if (stops[names[i]][0] != n) continue;
+        if (section != "" && stops[names[i]][1] != section) continue;
+        found = i;
+        matches++;
+    }
+
+    if (matches == 1) return travel(stops[names[found]]);
+
+    if (matches > 1) {
+        write("The computer says: Which part of deck " + n + "?\n");
+        for (i = 0; i < sizeof(names); i++)
+            if (stops[names[i]][0] == n)
+                write(sprintf("  deck %d %-5s %s\n",
+                      n, stops[names[i]][1], stops[names[i]][3]));
+        return 1;
+    }
 
     write("The computer says: Deck " + n +
+          (section != "" ? " " + section : "") +
           " is not on this lift's route. Try 'stops'.\n");
     return 1;
 }
