@@ -7,8 +7,10 @@ void create() {
     set("id", ({ "backpack", "pack", "a backpack" }));
     set("short", "a backpack");
     set_open_long(@EndText
-    A canvas pack with broad shoulder straps, built to carry a good deal
-without the weight of it hanging off one shoulder.
+    Made out of sturdy green canvas, this standard explorer's
+backpack is perfect for keeping the odd item or two out of the
+way. Two woven straps hang off of the backpack, enabling it
+to be worn upon the back.
 EndText
     );
     set("bulk", 60);

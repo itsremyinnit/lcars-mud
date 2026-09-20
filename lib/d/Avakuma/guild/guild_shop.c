@@ -69,6 +69,7 @@ EndText
     set("exits", ([
         "south" : "/d/Avakuma/guild/hallway_1",
     ]));
+    set("pre_exit_func/south", "leaving");
 
     storeroom = clone_object("/d/Avakuma/guild/storeroom");
     spawn_here("/d/Avakuma/guild/npc/belinda");
@@ -88,6 +89,8 @@ int do_read(string str) {
 "Valid commands in the shop:\n"
 "\n"
 "list              - list everything that is for sale\n"
+"handle <item>     - allows you to handle an item and look at it\n"
+"return <item>     - return the item you are handling\n"
 "buy <item>        - buy an item from the shop\n"
 "sell <item>       - sell an item in your inventory\n"
 "value <item>      - tells you how much gold you would receive when\n"

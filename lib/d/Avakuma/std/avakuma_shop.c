@@ -25,6 +25,10 @@
 
 inherit "/std/shop";
 
+// Items being handled, so they can be blocked from leaving and returned.
+// Keyed by the handler; the room refuses to let anyone out holding one.
+nosave mapping handled;
+
 // Resale is 14/25 of value, which matches T2T (a 34 gold backpack
 // fetched 19). Payout is capped: the shop has a budget and says so when
 // an item exceeds it, which is what stops a shop being a money printer.
@@ -136,6 +140,8 @@ int buy(string str) {
     }
 
     who->debit("gold", price);
+    // Buying what you were handling settles it; it is yours now.
+    if (handled && handled[who]) map_delete(handled, who);
     write(keeper() + " tells you: Would you like anything else today?\n");
     say((string)who->query("cap_name") + " buys " +
         (string)ob->query("short") + ".\n", who);
@@ -217,4 +223,81 @@ int sell(string str) {
     write(sprintf("%s : You get %d gold.\n", short_desc, price));
     write(keeper() + " tells you: Thanks for your business!  Please come again.\n");
     return 1;
+}
+
+void init() {
+    ::init();
+    add_action("do_handle", "handle");
+    add_action("do_return", "return");
+}
+
+// Let a customer take something out of the storeroom to look at, and
+// stop them walking off with it. Returning it puts it back on the shelf.
+int do_handle(string str) {
+    object ob, who;
+
+    who = this_player();
+    if (!str) {
+        notify_fail(keeper() + " tells you: Handle what?\n");
+        return 0;
+    }
+    if (!storeroom) {
+        notify_fail(keeper() + " tells you: I have nothing to show you.\n");
+        return 0;
+    }
+    if (!handled) handled = ([ ]);
+    if (handled[who]) {
+        notify_fail(keeper() +
+            " tells you: Return what you have first.\n");
+        return 0;
+    }
+
+    ob = present(str, storeroom);
+    if (!ob) {
+        notify_fail(keeper() + " tells you: I do not carry that.\n");
+        return 0;
+    }
+    if (ob->move(who) != MOVE_OK) {
+        notify_fail(keeper() + " tells you: You cannot hold that.\n");
+        return 0;
+    }
+
+    handled[who] = ob;
+    write(keeper() +
+        " tells you: Please return this when you're done with it.\n");
+    return 1;
+}
+
+int do_return(string str) {
+    object ob, who;
+
+    who = this_player();
+    if (!handled || !handled[who]) {
+        notify_fail(keeper() + " tells you: You have nothing of mine.\n");
+        return 0;
+    }
+    ob = handled[who];
+    if (str && !ob->id(str)) {
+        notify_fail(keeper() + " tells you: That is not what you are holding.\n");
+        return 0;
+    }
+    if (!ob || ob->move(storeroom) != MOVE_OK) {
+        notify_fail(keeper() + " tells you: Just hand it here.\n");
+        return 0;
+    }
+    map_delete(handled, who);
+    write(keeper() + " tells you: Thank you.  Would you like to buy it?\n");
+    return 1;
+}
+
+// Nobody walks out holding merchandise.
+int leaving() {
+    object who = this_player();
+
+    if (handled && handled[who] && present(handled[who], who)) {
+        write(keeper() + " tells you: You can't leave until you return that item!\n");
+        return 1;
+    }
+    if (handled && handled[who]) map_delete(handled, who);
+    return 0;
 }

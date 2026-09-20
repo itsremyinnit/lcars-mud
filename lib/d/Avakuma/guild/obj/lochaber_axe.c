@@ -6,9 +6,11 @@ void create() {
     set("id", ({ "axe", "lochaber", "lochaber axe" }));
     set("short", "a lochaber axe");
     set("long", @EndText
-    A long haft with a heavy curved blade set at the end of it, and a hook
-behind the blade for pulling a rider down off his horse. It takes both
-hands and a good deal of room.
+    This grim looking weapon has a long shaft with a thick
+spike sticking up from the end of it. It is meant to keep the
+opponent at a distance while causing grave wounds. With its 
+long reach and heavy slashing capabilities, the lochaber axe 
+is a vicious weapon to wield in battle.
 EndText
     );
     set("bulk", 110);

@@ -6,9 +6,12 @@ void create() {
     set("id", ({ "breastplate", "sheriff's breastplate", "sheriffs breastplate", "plate" }));
     set("short", "a sheriff's breastplate");
     set("long", @EndText
-    A solid plate of steel shaped to the chest, with the crest of the
-Rim-Ainacam worked into it just below the collar. It is heavy, and it was
-not made for running.
+    This piece of finely-crafted armour is enameled white and has the
+black symbol of a guild painted across the chest. The symbol is of a 
+shield with a long sword going diagonally downward from left to right.
+In the top right-hand corner is a balance, and in the lower left-hand 
+corner is the executioner's hood. The breastplate does look a little
+battered around the edges, though.
 EndText
     );
     set("bulk", 140);
