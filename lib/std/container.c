@@ -143,6 +143,13 @@ int put_into(string str) {
 	write("You can't move that object.\n");
 	return 1; }
  
+// LCARS-MUD: an object may set "no_container" if it cannot sensibly be
+// packed away: an open-topped drink would spill. Distinct from
+// prevent_insert, which is about the object refusing to be moved at all.
+	if((int)ths->query("no_container")) {
+		notify_fail("That would spill.\n");
+		return 0;
+	}
 	if((int)ths->query("prevent_insert")) {
 	write("You can't put that object inside a container.\n");
 	return 1; }

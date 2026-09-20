@@ -1,6 +1,7 @@
 // /d/Avakuma/framsburg/kitchen.c
 // A working tavern in the original: the menu prices beer, whiskey and
 // stew. "read menu" carries the list; the shop itself is deferred.
+#include <move.h>
 #include "/d/Avakuma/avakuma.h"
 inherit AVAKUMA_ROOM;
 
@@ -64,8 +65,59 @@ EndText
     spawn_objects();
 }
 
+// What Meryne serves, and what it costs. Paid on order, not on
+// consumption: you can carry a lidded bowl of stew away and eat it
+// somewhere else.
+#define MENU ([ \
+    "beer"    : ({ 2,  "/d/Avakuma/framsburg/obj/beer" }), \
+    "whiskey" : ({ 10, "/d/Avakuma/framsburg/obj/whiskey" }), \
+    "stew"    : ({ 13, "/d/Avakuma/framsburg/obj/stew" }), \
+])
+
 void init() {
     add_action("do_read", "read");
+    add_action("do_order", "order");
+}
+
+int do_order(string str) {
+    mapping menu;
+    mixed *item;
+    object ob, who;
+    int price;
+
+    who = this_player();
+    menu = MENU;
+
+    if (!str || !menu[str]) {
+        notify_fail("Meryne says: I do not serve that. Look at the menu.\n");
+        return 0;
+    }
+
+    item = menu[str];
+    price = item[0];
+
+    if ((int)who->query("wealth/gold") < price) {
+        notify_fail("Meryne says: You cannot pay for that.\n");
+        return 0;
+    }
+
+    ob = clone_object(item[1]);
+    if (!ob) {
+        notify_fail("Meryne says: I am out of that, sorry.\n");
+        return 0;
+    }
+
+    if (ob->move(who) != MOVE_OK) {
+        "/adm/daemons/disposal_d"->kill_object(ob);
+        write("Your hands are full!\n");
+        notify_fail("Meryne says: You can't carry it!\n");
+        return 0;
+    }
+
+    who->debit("gold", price);
+    write("Meryne says: Thanks for your order!\n");
+    say((string)who->query("cap_name") + " orders " + str + ".\n", who);
+    return 1;
 }
 
 int do_read(string str) {

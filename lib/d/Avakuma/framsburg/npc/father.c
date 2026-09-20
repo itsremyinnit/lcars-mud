@@ -23,5 +23,7 @@ EndText
     enable_commands();
     set_chat(4, ({
         ({ "emote", "$N helps out with the whiskey, a worried look on his face." }),
+        ({ "say", "says", "Honey, where are the children?" }),
+        ({ "say", "says", "Have you seen my children?" }),
     }));
 }

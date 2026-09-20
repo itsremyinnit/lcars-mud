@@ -223,6 +223,58 @@ if(link && (int)(link -> query("wizard"))){
 
    //   Reset the weapon and armor defaults
 
+
+// LCARS-MUD: hand slots.
+//
+// TMI-2 tracks weapon1/weapon2 and nothing else, so a player could carry
+// any number of open drinks and torches. An object declares how many
+// hands it needs with set("hands", n); a wielded weapon takes one, or two
+// if it sets "nosecond"; a worn shield takes one. Everything else is
+// carried freely, which matches T2T: only the drinks and the torch ever
+// showed as "in hands".
+//
+// Anything new that must be held needs set("hands", 1) on it.
+
+#define MAX_HANDS 2
+
+int hands_used() {
+    object *inv;
+    int i, n, h;
+
+    inv = all_inventory(this_object());
+    n = 0;
+    for (i = 0; i < sizeof(inv); i++) {
+        if (!inv[i]) continue;
+
+        h = (int)inv[i]->query("hands");
+        if (h) { n += h; continue; }
+
+        if (inv[i]->query("wielded"))
+            n += inv[i]->query("nosecond") ? 2 : 1;
+        else if (inv[i]->query("equipped") && inv[i]->query("type") == "shield")
+            n += 1;
+    }
+    return n;
+}
+
+int hands_free() {
+    int n;
+
+    n = MAX_HANDS - hands_used();
+    return n < 0 ? 0 : n;
+}
+
+// Refuse anything that needs a hand when there is not one to spare. Only
+// objects that declare "hands" are checked, so nothing else changes.
+int receive_object(object ob) {
+    int need;
+
+    if (!ob) return 0;
+    need = (int)ob->query("hands");
+    if (need && hands_free() < need) return 0;
+    return ::receive_object(ob);
+}
+
    set ("weapon1",0) ;
    set ("weapon2",0) ;
    set ("armor", ([]) ) ;

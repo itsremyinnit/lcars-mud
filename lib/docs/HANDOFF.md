@@ -188,10 +188,6 @@ the orc newbie dungeon. 38 rooms with finished prose, 26 NPCs, two working
 shops. Reached from the Nexus through the Towers Arch, which is one-way;
 the ring's `recall` is the way back.
 
-Framsburg, the Sheriff's Guild, Edoras and the orc dungeon were built on
-the original T2T by Jeremy and Jarrod as their introductory admin project.
-That content is their own work.
-
 ### Rings and corps
 
 `/d/Nexus/adm/ring_d.c` answers `query_worn_corps(who)` and `wearing_corps(who, corps)`. Rings declare a `corps` property; Calenmîr sets `"green"`. NPCs react to the *corps*, never to a named object, so a new corps is a data change rather than a code change. The guild guard is the first consumer: green gets a wordless deference, anything else gets warned once and then jailed.
