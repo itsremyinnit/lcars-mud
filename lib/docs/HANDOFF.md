@@ -177,32 +177,20 @@ Wizards arrive at the **Threshold** on login; players still start in the TMI-2 q
 
 ### Avakuma (`/d/Avakuma/`) — the Tolkien domain
 
-> **See `docs/AVAKUMA.md`.** It is the full account: the room, NPC and
-> shop bases and why they differ, spawning, wandering, dialogue, the
-> shops, the objects, the wanted poster, the jail and the corps hook, what
-> is deferred, and every mudlib change made for it. The summary below is
-> orientation only.
+> **See `docs/AVAKUMA.md` for all of it.** The room, NPC and shop bases
+> and why they differ, spawning, wandering, dialogue, both shops, the
+> objects, the wanted poster, the jail and the corps hook, what is
+> deferred, and every mudlib change made for it.
 
-A **standalone domain**, deliberately not under `/d/Nexus/`. Its rooms inherit the stock `ROOM`, not the Nexus base, so nothing here is coupled to Nexus code. Named for Tolkien's Avakúma, the Outer Void (accents dropped: the name becomes a path and a `groups` entry).
+A standalone domain, deliberately not under `/d/Nexus/`, holding the
+reconstruction of Framsburg, its guard barracks, the Sheriff's Guild and
+the orc newbie dungeon. 38 rooms with finished prose, 26 NPCs, two working
+shops. Reached from the Nexus through the Towers Arch, which is one-way;
+the ring's `recall` is the way back.
 
-Framsburg, the Sheriff's Guild, Edoras and the orc newbie dungeon were built on the original T2T by Jeremy and Jarrod as their introductory admin project. That content is their own work.
-
-**38 rooms, all with prose:**
-- `framsburg/` (12) — the ruined town. The pub is the arch arrival point. `push board` in the pub opens the passage to the guild, with distinct first-time and repeat messages tracked per player. The barracks front door answers `bang door`.
-- `barracks/` (7) — behind the front door. Main hall, messhall, kitchen, lounge, office, two sleeping quarters. The main hall's notice board and sign, and the messhall's sign, carry **ASCII artifacts** under `read`. South from the main hall is locked and answers nothing; deferred.
-- `orc/` (8) — across the battlefield north of town.
-- `guild/` (11) — the Rim-Ainacam, reached only through the board. Includes the jail.
-
-**Base class** `/d/Avakuma/std/avakuma_room.c`:
-- `set_outdoors([zone])` — hands light to `WEATHER_D`, giving day/night and live weather. `_look.c` appends the weather text automatically. Zones are stored but this weather daemon keeps one global state.
-- `set_dark()` — unlit interior.
-- `add_sealed(dir, msg)` — a visible but refused exit, for edges to be built later. **Call it after `set("exits", ...)`.**
-- **Weather-notice relay.** `WEATHER_D` sends change notices ("it begins to rain") by calling `message()` on each registered ROOM, but `/std/room.c` defines no `receive_message`, so they are dropped mudlib-wide. The base class relays them to the livings in the room. **Avakuma is the only place on this MUD where you see weather change while standing still.**
-- `inherit DOORS` is on the base, so `create_door()` works in any Avakuma room.
-
-**`exit_order`.** The exits line is built from `keys(exits)`, which is hash order, not insertion order. `/cmds/std/_look.c` was extended to honour an `exit_order` property naming the directions in display order; anything missing from it is appended in `keys()` order, so a partial list is safe. Every Avakuma room pins the order captured from the original. Nexus rooms set none and are unaffected. **Worth knowing: T2T's own exit order is also hash order, not authored.** We pin it because the transcripts recorded it, not because it was designed.
-
-**The jail** (`/d/Avakuma/guild/jail.c`). Thrown in by the guard, you are shackled: south is refused until a Framsburg barracks guard releases you (150s). Walked in under the ring, you are a visitor and south works. The release is a `call_out`, which does **not** survive a reboot, so `leaving()` also checks the expiry timestamp directly. Keep that check.
+Framsburg, the Sheriff's Guild, Edoras and the orc dungeon were built on
+the original T2T by Jeremy and Jarrod as their introductory admin project.
+That content is their own work.
 
 ### Rings and corps
 
