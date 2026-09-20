@@ -57,6 +57,7 @@ EndText
     set("exit_order", ({ "east", "north", "west" }));
 
     set("objects", ([
+        "/d/Avakuma/obj/trash_can" : 1,
         "/d/Avakuma/framsburg/npc/father" : 1,
         "/d/Avakuma/framsburg/npc/meryne" : 1,
     ]));

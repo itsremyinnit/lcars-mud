@@ -128,7 +128,7 @@ int list() {
     string *shorts;
     int *prices;
     string short_desc;
-    int i, j, found, price;
+    int i, price;
 
     stock = storeroom ? all_inventory(storeroom) : ({ });
     shorts = ({ });
@@ -140,11 +140,9 @@ int list() {
         short_desc = (string)stock[i]->query("short");
         if (!short_desc) continue;
 
-        found = -1;
-        for (j = 0; j < sizeof(shorts); j++)
-            if (shorts[j] == short_desc && prices[j] == price) found = j;
-        if (found != -1) continue;
-
+        // No deduplication: T2T listed every item on its own line, so
+        // two torches read as two torches, which also matches what
+        // "buy torch" will ask you to choose between.
         shorts += ({ short_desc });
         prices += ({ price });
     }

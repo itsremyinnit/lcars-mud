@@ -34,6 +34,7 @@ EndText
 
     storeroom = clone_object("/d/Avakuma/framsburg/storeroom");
     spawn_here("/d/Avakuma/framsburg/npc/malcolm");
+    spawn_here("/d/Avakuma/obj/trash_can");
 }
 
 void init() {

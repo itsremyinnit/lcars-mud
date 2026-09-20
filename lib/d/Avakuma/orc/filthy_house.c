@@ -51,6 +51,7 @@ EndText
     set("exit_order", ({ "north", "west" }));
 
     set("objects", ([
+        "/d/Avakuma/obj/campfire" : 1,
         "/d/Avakuma/orc/npc/half_orc" : 1,
     ]));
     spawn_objects();

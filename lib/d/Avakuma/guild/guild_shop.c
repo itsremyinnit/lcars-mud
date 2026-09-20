@@ -73,6 +73,7 @@ EndText
 
     storeroom = clone_object("/d/Avakuma/guild/storeroom");
     spawn_here("/d/Avakuma/guild/npc/belinda");
+    spawn_here("/d/Avakuma/obj/trash_can");
 }
 
 void init() {

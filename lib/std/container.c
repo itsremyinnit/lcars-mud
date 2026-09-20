@@ -108,7 +108,7 @@ int put_into(string str) {
 		if (environment(this_object())==this_player())
 			this_player()->set("capacity",(int)this_player()->query("capacity")-num) ;
 		if (num==1) word= "coin" ; else word="coins" ;
-		write ("You put "+num+" "+this+" "+word+" in "+that+".\n") ;
+		write ("Ok.\n") ;
 		say (this_player()->query("cap_name")+" puts "+num+" "+this+" "+word+" in "+that+".\n") ;
 		return 1 ;
 	}
@@ -167,13 +167,15 @@ int put_into(string str) {
 		if (environment(this_object())==this_player())
 		this_player()->set("capacity", 
 			(int)this_player()->query("capacity") - mass);
-		write("You put " + word + " in " +tht->query("short")+ ".\n");
+// LCARS-MUD: terse confirmation to the actor, matching T2T. The room
+// still sees who put what where; only the actor's own echo is shortened.
+		write("Ok.\n");
 		say((string)this_player()->query("cap_name") + " puts " +
 		    word + " in " + tht->query("short") + ".\n");
 		return 1; }
  
 		if(res == MOVE_NO_ROOM) 
-		write("There isn't enough room left to put that in.\n");
+		write("Too bulky.\n");
  
 		else if(res == MOVE_TOO_HEAVY) 
 		write("It is too heavy.\n");

@@ -75,6 +75,7 @@ EndText
     set("exit_order", ({ "north" }));
 
     set("objects", ([
+        "/d/Avakuma/obj/trash_can" : 1,
         "/d/Avakuma/guild/npc/dano" : 1,
         "/d/Avakuma/guild/npc/dalin" : 1,
     ]));
