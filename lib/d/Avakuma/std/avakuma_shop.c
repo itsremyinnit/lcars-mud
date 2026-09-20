@@ -44,6 +44,25 @@ void set_shopkeeper(string who) {
     set("shopkeeper", who);
 }
 
+// Is the shopkeeper alive and standing here? The shop is the room, not
+// the man, so without this it keeps trading over his corpse.
+private int keeper_present() {
+    object *inv;
+    int i;
+
+    inv = all_inventory(this_object());
+    for (i = 0; i < sizeof(inv); i++)
+        if (inv[i] && living(inv[i]) && !inv[i]->query("user"))
+            return 1;
+    return 0;
+}
+
+private int shop_closed() {
+    if (keeper_present()) return 0;
+    notify_fail("There is nobody here to trade with.\n");
+    return 1;
+}
+
 private string keeper() {
     string who;
     who = (string)query("shopkeeper");
@@ -130,6 +149,8 @@ int list() {
     string short_desc;
     int i, price;
 
+    if (shop_closed()) return 0;
+
     stock = storeroom ? all_inventory(storeroom) : ({ });
     shorts = ({ });
     prices = ({ });
@@ -161,6 +182,8 @@ int list() {
 int buy(string str) {
     object ob, who;
     int price;
+
+    if (shop_closed()) return 0;
 
     who = this_player();
     if (!str) {
@@ -203,6 +226,8 @@ int value(string str) {
     object ob;
     int price;
 
+    if (shop_closed()) return 0;
+
     if (!str) {
         notify_fail(keeper() + " tells you: Value what?\n");
         return 0;
@@ -232,6 +257,8 @@ int sell(string str) {
     object ob, who;
     string short_desc;
     int price;
+
+    if (shop_closed()) return 0;
 
     who = this_player();
     if (!str) {
@@ -286,6 +313,8 @@ void init() {
 // stop them walking off with it. Returning it puts it back on the shelf.
 int do_handle(string str) {
     object ob, who;
+
+    if (shop_closed()) return 0;
 
     who = this_player();
     if (!str) {

@@ -13,6 +13,7 @@ EndText
     );
     set("bulk", 60); set("mass", 120);
     set("capacity", 900); set("volume", 260);
+    set("wear_slot", "back");
     set("value", ({ 32, "gold" }));
 }
 
@@ -34,8 +35,23 @@ int do_wear(string str) {
         return 0;
     }
     if (query("worn")) {
-        notify_fail("You are already wearing it.\n");
-        return 0;
+        write("You are already wearing it.\n");
+        return 1;
+    }
+    // One pack at a time. ARMOR would give us slots for free, but it
+    // cannot be inherited alongside CONTAINER (see the note above), so
+    // the check is by hand: anything else on us claiming the back.
+    {
+        object *inv;
+        int i;
+
+        inv = all_inventory(this_player());
+        for (i = 0; i < sizeof(inv); i++)
+            if (inv[i] && inv[i] != this_object() && inv[i]->query("worn") &&
+                inv[i]->query("wear_slot") == "back") {
+                write("You are already wearing a pack on your back.\n");
+                return 1;
+            }
     }
     set("worn", 1);
     write("You shoulder the backpack.\n");
@@ -46,8 +62,8 @@ int do_wear(string str) {
 int do_unwear(string str) {
     if (!str || !id(str)) return 0;
     if (!query("worn")) {
-        notify_fail("You are not wearing it.\n");
-        return 0;
+        write("You are not wearing it.\n");
+        return 1;
     }
     set("worn", 0);
     write("You take the backpack off.\n");
