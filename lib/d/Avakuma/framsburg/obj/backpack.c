@@ -15,3 +15,42 @@ EndText
     set("capacity", 900); set("volume", 260);
     set("value", ({ 32, "gold" }));
 }
+
+// Worn on the back. CONTAINER and ARMOR both descend from OBJECT and
+// FluffOS will not share the duplicate, so inheriting both fails to
+// compile ("Illegal to redefine nomask function"). The wear verbs are
+// added directly instead. A worn pack still takes no hands.
+void init() {
+    ::init();
+    add_action("do_wear", "wear");
+    add_action("do_unwear", "unwear");
+    add_action("do_unwear", "remove");
+}
+
+int do_wear(string str) {
+    if (!str || !id(str)) return 0;
+    if (environment() != this_player()) {
+        notify_fail("You are not carrying that.\n");
+        return 0;
+    }
+    if (query("worn")) {
+        notify_fail("You are already wearing it.\n");
+        return 0;
+    }
+    set("worn", 1);
+    write("You shoulder the backpack.\n");
+    say((string)this_player()->query("cap_name") + " shoulders a backpack.\n");
+    return 1;
+}
+
+int do_unwear(string str) {
+    if (!str || !id(str)) return 0;
+    if (!query("worn")) {
+        notify_fail("You are not wearing it.\n");
+        return 0;
+    }
+    set("worn", 0);
+    write("You take the backpack off.\n");
+    say((string)this_player()->query("cap_name") + " takes off a backpack.\n");
+    return 1;
+}

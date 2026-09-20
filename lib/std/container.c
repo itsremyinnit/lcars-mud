@@ -147,9 +147,8 @@ int put_into(string str) {
 // packed away: an open-topped drink would spill. Distinct from
 // prevent_insert, which is about the object refusing to be moved at all.
 	if((int)ths->query("no_container")) {
-		notify_fail("That would spill.\n");
-		return 0;
-	}
+	write("That would spill.\n");
+	return 1; }
 	if((int)ths->query("prevent_insert")) {
 	write("You can't put that object inside a container.\n");
 	return 1; }
