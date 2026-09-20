@@ -668,8 +668,11 @@ string process_contents (mixed *contents, int flag) {
 /* older code handled living cases separately.  taken out by Mobydick @ TMI-2
 on 10 April 1993, kept out by Fantome 24 July 1993 */
     i = sizeof (match[ninv[loop]]);
+    // LCARS-MUD: bracketed count rather than "Three An injured soldiers".
+    // convert_number + pluralize mangles any short that starts with an
+    // article, and T2T's own style was "An injured soldier [3]".
     if (i > 1)
-      tmp = sprintf ("%s %s", convert_number (i), pluralize (ninv[loop]));
+      tmp = sprintf ("%s [%d]", ninv[loop], i);
     else tmp = ninv[loop];
       
     if (flag == 1)

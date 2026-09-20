@@ -37,6 +37,14 @@ void set_dark() {
     set("light", 0);
 }
 
+// /std/room.c calls reset() from its own create(), which runs before the
+// inheriting room has had a chance to set("objects", ...). So anything a
+// room wants spawned is not there yet when the stock reset() looks. Rooms
+// call this at the end of their create() instead.
+void spawn_objects() {
+    reset();
+}
+
 int do_sealed(string dir) {
     if (!sealed_exits || !sealed_exits[dir]) return 0;
     write(sealed_exits[dir]);

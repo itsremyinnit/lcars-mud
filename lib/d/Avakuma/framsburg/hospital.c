@@ -54,4 +54,5 @@ EndText
         "/d/Avakuma/framsburg/npc/injured_soldier" : 3,
         "/d/Avakuma/framsburg/npc/nurse"           : 1,
     ]));
+    spawn_objects();
 }

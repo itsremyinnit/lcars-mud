@@ -22,7 +22,7 @@ EndText
     set("mass", 7000);
     set("bulk", 250);
     enable_commands();
-    set_chat(8, ({
+    set_chat(3, ({
         ({ "say", "murmurs", "I can't believe I was injured by that Orc." }),
         ({ "say", "yells",   "Ouch! That hurt!" }),
     }));

@@ -23,7 +23,7 @@ EndText
     set("mass", 5000);
     set("bulk", 250);
     enable_commands();
-    set_chat(8, ({
+    set_chat(5, ({
         ({ "say", "whispers", "Go back to sleep, you need your rest." }),
         ({ "say", "says",     "Will you keep still?" }),
     }));
