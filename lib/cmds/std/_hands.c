@@ -7,12 +7,11 @@ string help();
 
 int cmd_hands(string str) {
     object *inv, me;
-    int i, free, shown, h;
+    int i, free, h;
     string what;
 
     me = this_player();
     inv = all_inventory(me);
-    shown = 0;
 
     write("You have two hands.\n");
     for (i = 0; i < sizeof(inv); i++) {
@@ -21,14 +20,17 @@ int cmd_hands(string str) {
 
         h = (int)inv[i]->query("hands");
         if (h) what = "(in hands)";
-        else if (inv[i]->query("wielded")) what = "(wielded)";
+        else if (inv[i]->query("wielded"))
+            // One entry, however many hands it takes. T2T says "You switch
+            // your grip to two hands" rather than listing it twice.
+            what = inv[i]->query("nosecond") ? "(wielded, two hands)"
+                                             : "(wielded)";
         else if (inv[i]->query("equipped") && inv[i]->query("type") == "shield")
             what = "(shield)";
 
         if (!what) continue;
         write(sprintf("You are holding %-38s %s\n",
               lower_case((string)inv[i]->query("short")), what));
-        shown++;
     }
 
     free = (int)me->hands_free();
