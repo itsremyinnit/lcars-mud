@@ -67,7 +67,6 @@ EndText
     set("exit_order", ({ "east", "west", "wagon" }));
 
     set("objects", ([
-        "/d/Avakuma/framsburg/npc/intimidating_guard" : 1,
         "/d/Avakuma/framsburg/npc/gruff_soldier" : 1,
         "/d/Avakuma/framsburg/npc/large_soldier" : 1,
     ]));

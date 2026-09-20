@@ -79,6 +79,70 @@ void emit_line(mixed line) {
     tell_room(env, line[sizeof(line) - 1] + "\n");
 }
 
+// Dialogue. /cmds/std/_ask.c reads "inquiry" for topics and
+// "inquiry_default" for the brush-off when the topic is unknown.
+void set_inquiry(mapping topics, string fallback) {
+    set("inquiry", topics);
+    if (fallback) set("inquiry_default", fallback);
+}
+
+// Wandering, bounded to a whitelist of rooms.
+//
+// /std/monster.c's move_around() supports a "forbidden_rooms" blacklist,
+// which is the wrong shape here: keeping a townsperson out of the orc camp
+// would mean listing every room they must not enter, and every room added
+// later. This takes the list of rooms they MAY enter instead, so a new
+// room is out of bounds by default.
+//
+//   set_range(12, ({ "/d/Avakuma/framsburg/road_north",
+//                    "/d/Avakuma/framsburg/road_south" }));
+//
+// speed is seconds between moves.
+void set_range(int speed, string *rooms) {
+    set("moving", 1);
+    set("speed", speed);
+    set("range", rooms);
+    call_out("move_around", speed);
+}
+
+void move_around() {
+    mapping exits, doors;
+    string *dirs, *range;
+    string dir, dest;
+    object env;
+
+    if (query("moving") == 1) set("moving", -1);
+
+    env = environment();
+    if (!env || !env->query("exits")) return;
+
+    call_out("move_around", query("speed"));
+
+    if (attackers && sizeof(attackers)) return;
+
+    exits = env->query("exits");
+    dirs = keys(exits);
+    if (!dirs || !sizeof(dirs)) return;
+
+    dir = dirs[random(sizeof(dirs))];
+    dest = exits[dir];
+
+    // Sealed exits point back at their own room; going nowhere loudly
+    // is worse than staying put.
+    if (dest == base_name(env)) return;
+
+    range = query("range");
+    if (range && member_array(dest, range) == -1) return;
+
+    // Shut doors stay shut. An NPC opening doors behind itself is a
+    // separate decision from an NPC wandering.
+    doors = env->query("doors");
+    if (doors && sizeof(doors) && doors[dir] && doors[dir]["status"] != "open")
+        return;
+
+    move_player(dest, query_mout(dir));
+}
+
 void monster_chat() {
     mixed *chats;
 

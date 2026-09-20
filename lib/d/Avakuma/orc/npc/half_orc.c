@@ -24,4 +24,13 @@ EndText
     set_chat(4, ({
         ({ "emote", "$N scratches at something and does not look at you." }),
     }));
+    set_range(60, ({
+        "/d/Avakuma/orc/filthy_road_south",
+        "/d/Avakuma/orc/filthy_road_north",
+        "/d/Avakuma/orc/filthy_house",
+        "/d/Avakuma/orc/end_of_road",
+        "/d/Avakuma/orc/dirty_house",
+        "/d/Avakuma/orc/dirty_room",
+    }));
+
 }

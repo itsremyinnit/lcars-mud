@@ -14,6 +14,7 @@ int cmd_ask(string str) {
    string mon_name, subject;
    object mon_obj;
    mapping cmd_map;
+   string reply;
 
 
   if (!str) {
@@ -52,20 +53,26 @@ int cmd_ask(string str) {
 	write (capitalize(mon_name)+" looks at you blankly.\n") ;
 	return 1 ;
     }
-  if (undefinedp(cmd_map[subject])) {
-	tell_room(environment(this_player()), this_player()-> query("cap_name") +
-	    " asks " + capitalize(mon_name) + " about " + subject + ".\n",
-	    this_player()) ;
-     tell_room(environment(this_player()), capitalize(mon_name) + " says: " +
-              "I don't know about that.\n");
-     return 1;
+
+// LCARS-MUD: answers used to go out through tell_room(), which tags them
+// with the message class "tell_room" rather than "say", so nothing
+// downstream could tell an NPC's speech from anything else it emitted.
+// They now go out as class "say", like real speech. The asker is also told
+// what they asked, which the original left out. An NPC may set
+// "inquiry_default" for its own brush-off in place of the stock line.
+  reply = cmd_map[subject];
+  if (undefinedp(reply)) {
+     reply = mon_obj->query("inquiry_default");
+     if (!reply) reply = "I don't know about that.";
   }
-  else
-      tell_room(environment(this_player()), this_player()-> query("cap_name") +
-	    " asks " + capitalize(mon_name) + " about " + subject + ".\n",
-		this_player()) ;
-     tell_room(environment(this_player()), capitalize(mon_name) + " says: " +
-              cmd_map[subject] + "\n");
+
+  message("say", "You ask " + capitalize(mon_name) + " about " +
+          subject + ".\n", this_player());
+  message("say", this_player()->query("cap_name") + " asks " +
+          capitalize(mon_name) + " about " + subject + ".\n",
+          environment(this_player()), this_player());
+  message("say", capitalize(mon_name) + " says: " + reply + "\n",
+          environment(this_player()));
   return 1;
   }
 

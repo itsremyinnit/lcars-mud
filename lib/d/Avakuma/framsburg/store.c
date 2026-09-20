@@ -37,9 +37,4 @@ EndText
         "west" : "/d/Avakuma/framsburg/road_south",
     ]));
     set("exit_order", ({ "west" }));
-
-    set("objects", ([
-        "/d/Avakuma/framsburg/npc/intimidating_guard" : 1,
-    ]));
-    spawn_objects();
 }

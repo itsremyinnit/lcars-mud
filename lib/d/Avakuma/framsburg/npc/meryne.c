@@ -25,4 +25,14 @@ EndText
         ({ "say", "says", "Would you like some good homemade whiskey?" }),
         ({ "say", "says", "Would you care for some stew?" }),
     }));
+    set_inquiry(([
+        "stew"          : "Thirteen, and there is plenty of it.",
+        "whiskey"       : "Ten. Homemade, and better than it sounds.",
+        "beer"          : "Two. It is what it is.",
+        "menu"          : "On the wall. Have a look.",
+        "children"      : "They are everywhere. I have given up keeping track of them.",
+        "kids"          : "They are everywhere. I have given up keeping track of them.",
+        "husband"       : "He helps where he can. He worries more than he says.",
+    ]), "I would not know about that.");
+
 }

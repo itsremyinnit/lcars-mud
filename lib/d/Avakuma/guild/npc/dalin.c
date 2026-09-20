@@ -24,4 +24,13 @@ EndText
         ({ "say", "says", "Why don't you try your luck at the darts? Three bulls-eyes and there's a prize in it." }),
         ({ "emote", "$N works the bar with the ease of a great many years at it." }),
     }));
+    set_inquiry(([
+        "darts"         : "Three bulls-eyes and there is a prize in it. Nobody has managed it lately.",
+        "dart"          : "Three bulls-eyes and there is a prize in it. Nobody has managed it lately.",
+        "prize"         : "Win it and find out.",
+        "scoreboard"    : "Read it. Some of those numbers took years.",
+        "beer"          : "Five, and worth it.",
+        "guild"         : "I only keep the bar. The politics happen down the hall.",
+    ]), "Could not tell you. Drink?");
+
 }

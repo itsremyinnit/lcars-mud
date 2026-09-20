@@ -27,4 +27,12 @@ EndText
         ({ "say", "whispers", "Go back to sleep, you need your rest." }),
         ({ "say", "says",     "Will you keep still?" }),
     }));
+    set_inquiry(([
+        "healing"       : "Ask me nicely and I will see what I can do.",
+        "heal"          : "Ask me nicely and I will see what I can do.",
+        "soldiers"      : "They were lucky. Most of them. Some more than others.",
+        "wounds"        : "Orc work. I have seen a great deal of it lately.",
+        "orcs"          : "I have no opinion on orcs that is fit to say aloud.",
+    ]), "I have my hands full, sorry.");
+
 }

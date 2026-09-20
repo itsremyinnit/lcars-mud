@@ -22,4 +22,13 @@ EndText
     set("bulk", 250);
     enable_commands();
     // No idle chat captured for this one.
+    set_inquiry(([
+        "wagon"         : "Everything in it is for sale. Read the sign first.",
+        "shop"          : "Everything in it is for sale. Read the sign first.",
+        "weapons"       : "I know weapons. Tell me what you need and I will tell you what it costs.",
+        "armour"        : "Primitive work, most of it. It will still keep more off you than your shirt.",
+        "thieves"       : "I have dealt with a great many. It stopped being interesting years ago.",
+        "framsburg"     : "It was a town. Now it is a place people are camped in.",
+    ]), "Not something I trade in.");
+
 }

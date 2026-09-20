@@ -27,4 +27,13 @@ EndText
     set_chat(3, ({
         ({ "emote", "$N smiles at you in a way that is worth being careful about." }),
     }));
+    set_inquiry(([
+        "goods"         : "Ask me for a list and I will show you what I have.",
+        "list"          : "Ask me for a list and I will show you what I have.",
+        "shop"          : "Everything a sheriff heading out might need, and a few things he only wants.",
+        "weapons"       : "The finest make I can get. Have a look at the walls.",
+        "armour"        : "On the walls and on the shelves. Handle anything you like.",
+        "guild"         : "They keep me busy. Or they did.",
+    ]), "Not my department, love.");
+
 }

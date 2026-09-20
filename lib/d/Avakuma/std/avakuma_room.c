@@ -24,6 +24,7 @@ void create() {
     seteuid(getuid());
     set("light", 1);
     set("avakuma", 1);
+    set("respawn_time", 300);   // seconds; rooms may override
 }
 
 // Hands this room's light over to WEATHER_D and registers it for change
@@ -37,12 +38,52 @@ void set_dark() {
     set("light", 0);
 }
 
-// /std/room.c calls reset() from its own create(), which runs before the
-// inheriting room has had a chance to set("objects", ...). So anything a
-// room wants spawned is not there yet when the stock reset() looks. Rooms
-// call this at the end of their create() instead.
+// Spawning and repopulation.
+//
+// Two reasons this does not use /std/room.c's reset():
+//
+// 1. reset() runs from the stock create(), before the inheriting room has
+//    set("objects", ...), so there is nothing to spawn when it looks.
+// 2. reset() counts NPCs by what is present in the room. Once an NPC
+//    wanders off, the room sees itself short and clones a replacement,
+//    and the population grows without limit.
+//
+// This tracks the objects it spawned instead, so a wanderer still counts
+// while it is away and only a destructed one is replaced. Rooms call it
+// at the end of create(); it reschedules itself from then on.
+nosave object *spawned;
+
 void spawn_objects() {
-    reset();
+    mapping obs;
+    string *paths;
+    int i, j, want, alive;
+    object ob;
+
+    obs = query("objects");
+    if (!obs || !sizeof(obs)) return;
+
+    if (!spawned) spawned = ({ });
+    spawned -= ({ 0 });          // drop anything destructed
+
+    paths = keys(obs);
+    for (i = 0; i < sizeof(paths); i++) {
+        want = obs[paths[i]];
+        if (!intp(want)) continue;
+
+        alive = 0;
+        for (j = 0; j < sizeof(spawned); j++)
+            if (spawned[j] && base_name(spawned[j]) == paths[i])
+                alive++;
+
+        for (j = alive; j < want; j++) {
+            ob = clone_object(paths[i]);
+            if (!ob) continue;
+            ob->move(this_object());
+            spawned += ({ ob });
+        }
+    }
+
+    call_out("spawn_objects", query("respawn_time"));
 }
 
 int do_sealed(string dir) {

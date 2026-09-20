@@ -21,4 +21,12 @@ EndText
     set("bulk", 250);
     enable_commands();
     // No idle chat captured for this one.
+    set_range(70, ({
+        "/d/Avakuma/framsburg/road_north",
+        "/d/Avakuma/framsburg/road_south",
+        "/d/Avakuma/framsburg/armoury_house",
+        "/d/Avakuma/framsburg/store",
+        "/d/Avakuma/framsburg/entrance",
+    }));
+
 }

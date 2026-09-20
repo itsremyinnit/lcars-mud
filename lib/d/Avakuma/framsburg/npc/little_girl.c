@@ -25,4 +25,13 @@ EndText
         ({ "emote", "$N wipes her hands on her dress, making it worse." }),
         ({ "emote", "$N watches you with frank curiosity." }),
     }));
+    set_range(50, ({
+        "/d/Avakuma/framsburg/road_north",
+        "/d/Avakuma/framsburg/road_south",
+        "/d/Avakuma/framsburg/corner_house",
+        "/d/Avakuma/framsburg/entrance",
+        "/d/Avakuma/framsburg/store",
+        "/d/Avakuma/orc/battlefield",
+    }));
+
 }

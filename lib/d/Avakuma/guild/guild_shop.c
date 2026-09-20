@@ -1,11 +1,21 @@
 // /d/Avakuma/guild/guild_shop.c
-// A working shop in the original. The sign is readable and carries the
-// full command list; the shop mechanics are deferred.
-#include "/d/Avakuma/avakuma.h"
-inherit AVAKUMA_ROOM;
+// Belinda's shop. Stock lives in /d/Avakuma/guild/storeroom.c, which
+// restocks itself on a timer.
+//
+// This room inherits the shop base rather than AVAKUMA_ROOM: see the note
+// at the top of /d/Avakuma/std/avakuma_shop.c for why the two cannot be
+// combined. Consequences here are no exit_order and no spawn_objects, so
+// Belinda is cloned directly and the single exit needs no ordering.
+//
+// Working: list, buy, sell, value. Advertised on the original sign but
+// not yet built: handle, return, and the list filters.
+#include <money.h>
+inherit "/d/Avakuma/std/avakuma_shop";
 
 void create() {
     ::create();
+    set("light", 1);
+    set_shopkeeper("Belinda");
     set("short", "The guild shop");
     set("long", @EndText
     Directly opposite the entrance stands the counter where the business
@@ -59,15 +69,13 @@ EndText
     set("exits", ([
         "south" : "/d/Avakuma/guild/hallway_1",
     ]));
-    set("exit_order", ({ "south" }));
 
-    set("objects", ([
-        "/d/Avakuma/guild/npc/belinda" : 1,
-    ]));
-    spawn_objects();
+    storeroom = clone_object("/d/Avakuma/guild/storeroom");
+    spawn_here("/d/Avakuma/guild/npc/belinda");
 }
 
 void init() {
+    ::init();
     add_action("do_read", "read");
 }
 
@@ -80,27 +88,11 @@ int do_read(string str) {
 "Valid commands in the shop:\n"
 "\n"
 "list              - list everything that is for sale\n"
-"list <w | weapon> - list all weapons for sale. Can be used with 'a'\n"
-"                    for 'armour' and other type of items\n"
-"list < 50         - list everything worth less than 50 gold. Can be\n"
-"                    also used to query more '>' or equal '=', and\n"
-"                    in combination with the above\n"
-"list armour <part>      - list all armours that cover <part>\n"
-"list armour <part> only - list all armours that only cover <part>\n"
-"handle <item>     - allows you to handle an item and look at it\n"
-"return <item>     - return the item you are handling\n"
 "buy <item>        - buy an item from the shop\n"
 "sell <item>       - sell an item in your inventory\n"
-"sell <item> from <container> - sell an item from a container\n"
-"sell <item> except <item>    - sell items excluding certain items\n"
-"sell <item> from <container> except <item> - you get the idea\n"
-"value <item>      - tells you how much gold you would recieve when\n"
-"                    selling the item. Can be used in the same format\n"
-"                    as 'sell'\n"
+"value <item>      - tells you how much gold you would receive when\n"
+"                    selling the item\n"
 "\n"
-"<item> is usually the name of an object, like \"sword\".  It can \n"
-"also specify multiple items \"all\" or multiple items of the same\n"
-"type \"all sword\".  For multiples, it can specify a specific order\n"
-"of item \"sword 1\", \"sword 2\", etc.\n");
+"<item> is usually the name of an object, like \"axe\".\n");
     return 1;
 }

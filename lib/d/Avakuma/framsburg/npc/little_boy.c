@@ -24,4 +24,13 @@ EndText
         ({ "emote", "$N climbs onto something he should not be on." }),
         ({ "emote", "$N tears past you without slowing down." }),
     }));
+    set_range(45, ({
+        "/d/Avakuma/framsburg/road_north",
+        "/d/Avakuma/framsburg/road_south",
+        "/d/Avakuma/framsburg/armoury_house",
+        "/d/Avakuma/framsburg/hospital",
+        "/d/Avakuma/framsburg/kitchen",
+        "/d/Avakuma/framsburg/corner_house",
+    }));
+
 }

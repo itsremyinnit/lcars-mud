@@ -29,4 +29,13 @@ EndText
     set_chat(3, ({
         ({ "emote", "$N shifts his weight off his bad leg without noticing he did." }),
     }));
+    set_inquiry(([
+        "training"      : "Type 'cost' to see what I can teach, and 'train' to be taught.",
+        "train"         : "Type 'cost' to see what I can teach, and 'train' to be taught.",
+        "leg"           : "A raid, some years back. It keeps me from running anyone down.",
+        "limp"          : "A raid, some years back. It keeps me from running anyone down.",
+        "guild"         : "I have been in it a great many years. Longer than most.",
+        "clark"         : "The Guildmaster. He has taken all of this hard.",
+    ]), "I have no answer for that.");
+
 }
