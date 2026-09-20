@@ -71,4 +71,9 @@ EndText
         "south" : "/d/Avakuma/guild/hallway_2",
     ]));
     set("exit_order", ({ "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/guild/npc/clark" : 1,
+    ]));
+    spawn_objects();
 }

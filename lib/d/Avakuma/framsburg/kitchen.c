@@ -55,6 +55,12 @@ EndText
         "west"  : "/d/Avakuma/framsburg/leaders_house",
     ]));
     set("exit_order", ({ "east", "north", "west" }));
+
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/father" : 1,
+        "/d/Avakuma/framsburg/npc/meryne" : 1,
+    ]));
+    spawn_objects();
 }
 
 void init() {

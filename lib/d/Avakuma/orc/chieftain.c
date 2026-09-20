@@ -34,4 +34,9 @@ EndText
         "south" : "/d/Avakuma/orc/dirty_room",
     ]));
     set("exit_order", ({ "east", "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/orc/npc/chieftain" : 1,
+    ]));
+    spawn_objects();
 }

@@ -41,4 +41,9 @@ EndText
         "east" : "/d/Avakuma/framsburg/kitchen",
     ]));
     set("exit_order", ({ "east" }));
+
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/leader" : 1,
+    ]));
+    spawn_objects();
 }

@@ -63,4 +63,10 @@ EndText
         "south" : "/d/Avakuma/framsburg/road_south",
     ]));
     set("exit_order", ({ "east", "north", "west", "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/intimidating_guard" : 1,
+        "/d/Avakuma/framsburg/npc/little_boy" : 1,
+    ]));
+    spawn_objects();
 }

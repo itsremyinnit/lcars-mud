@@ -76,6 +76,11 @@ EndText
         "west"  : "/d/Avakuma/guild/outside",
     ]));
     set("exit_order", ({ "north", "east", "south", "west" }));
+
+    set("objects", ([
+        "/d/Avakuma/guild/npc/rim_guard" : 1,
+    ]));
+    spawn_objects();
     set("pre_exit_func/north", "guard_north");
 }
 

@@ -45,5 +45,10 @@ EndText
         "south" : "/d/Avakuma/barracks/office",
     ]));
     set("exit_order", ({ "east", "north", "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/barracks/npc/offduty_guard" : 2,
+    ]));
+    spawn_objects();
     create_door("south", "north", "A plain door", "closed");
 }

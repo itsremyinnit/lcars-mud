@@ -36,4 +36,11 @@ EndText
         "south" : "/d/Avakuma/orc/filthy_road_north",
     ]));
     set("exit_order", ({ "east", "west", "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/orc/npc/half_orc" : 1,
+        "/d/Avakuma/orc/npc/injured_orc" : 3,
+        "/d/Avakuma/orc/npc/orc_medic" : 1,
+    ]));
+    spawn_objects();
 }

@@ -35,4 +35,10 @@ EndText
         "north" : "/d/Avakuma/guild/hallway_2",
     ]));
     set("exit_order", ({ "north" }));
+
+    set("objects", ([
+        "/d/Avakuma/guild/npc/eomon" : 1,
+        "/d/Avakuma/guild/npc/trainee" : 1,
+    ]));
+    spawn_objects();
 }

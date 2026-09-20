@@ -46,4 +46,9 @@ EndText
         "south" : "/d/Avakuma/barracks/messhall",
     ]));
     set("exit_order", ({ "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/barracks/npc/sleeping_guard" : 2,
+    ]));
+    spawn_objects();
 }

@@ -60,6 +60,11 @@ EndText
         "south" : "/d/Avakuma/guild/hallway_1",
     ]));
     set("exit_order", ({ "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/guild/npc/belinda" : 1,
+    ]));
+    spawn_objects();
 }
 
 void init() {

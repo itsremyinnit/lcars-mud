@@ -72,5 +72,10 @@ EndText
         "north" : "/d/Avakuma/barracks/lounge",
     ]));
     set("exit_order", ({ "north" }));
+
+    set("objects", ([
+        "/d/Avakuma/barracks/npc/officer" : 1,
+    ]));
+    spawn_objects();
     create_door("north", "south", "A plain door", "closed");
 }

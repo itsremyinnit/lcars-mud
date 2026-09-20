@@ -54,6 +54,11 @@ EndText
         "west" : "/d/Avakuma/barracks/lounge",
     ]));
     set("exit_order", ({ "east", "south", "west" }));
+
+    set("objects", ([
+        "/d/Avakuma/barracks/npc/old_lady" : 1,
+    ]));
+    spawn_objects();
     add_sealed("south", "The door is locked.\n");
 }
 

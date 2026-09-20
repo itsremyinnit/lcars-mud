@@ -34,4 +34,9 @@ EndText
         "west"      : "/d/Avakuma/orc/dirty_house",
     ]));
     set("exit_order", ({ "southwest", "west" }));
+
+    set("objects", ([
+        "/d/Avakuma/orc/npc/half_orc" : 1,
+    ]));
+    spawn_objects();
 }

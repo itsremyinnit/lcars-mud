@@ -40,4 +40,10 @@ EndText
         "west" : "/d/Avakuma/framsburg/kitchen",
     ]));
     set("exit_order", ({ "east", "west" }));
+
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/large_soldier" : 1,
+        "/d/Avakuma/framsburg/npc/gruff_soldier" : 1,
+    ]));
+    spawn_objects();
 }

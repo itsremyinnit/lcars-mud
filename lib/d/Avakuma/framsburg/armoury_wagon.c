@@ -43,6 +43,11 @@ EndText
         "out" : "/d/Avakuma/framsburg/armoury_house",
     ]));
     set("exit_order", ({ "out" }));
+
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/malcolm" : 1,
+    ]));
+    spawn_objects();
 }
 
 void init() {

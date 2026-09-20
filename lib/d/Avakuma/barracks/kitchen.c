@@ -58,4 +58,9 @@ EndText
         "north" : "/d/Avakuma/barracks/messhall",
     ]));
     set("exit_order", ({ "north" }));
+
+    set("objects", ([
+        "/d/Avakuma/barracks/npc/chef" : 1,
+    ]));
+    spawn_objects();
 }

@@ -51,4 +51,9 @@ EndText
         "south" : "/d/Avakuma/framsburg/entrance",
     ]));
     set("exit_order", ({ "east", "north", "west", "south" }));
+
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/little_girl" : 1,
+    ]));
+    spawn_objects();
 }

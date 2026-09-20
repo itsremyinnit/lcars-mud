@@ -26,4 +26,9 @@ EndText
         "north" : "/d/Avakuma/guild/hallway_1",
     ]));
     set("exit_order", ({ "north" }));
+
+    set("objects", ([
+        "/d/Avakuma/guild/npc/tarlyn" : 1,
+    ]));
+    spawn_objects();
 }
