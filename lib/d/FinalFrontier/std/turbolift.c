@@ -20,6 +20,7 @@ inherit FF_ROOM;
   "quarters"     : ({  8, "/d/FinalFrontier/deck08/corridor_fore",    "Officers' Quarters" }), \
   "ten-forward"  : ({ 10, "/d/FinalFrontier/deck10/ten_forward",      "Ten-Forward" }), \
   "sickbay"      : ({ 12, "/d/FinalFrontier/deck12/sickbay",          "Sickbay" }), \
+  "holodecks"    : ({ 11, "/d/FinalFrontier/deck11/corridor",         "Holodecks and Arboretum" }), \
   "engineering"  : ({ 36, "/d/FinalFrontier/deck36/engineering",      "Main Engineering" }), \
 ])
 
@@ -60,6 +61,7 @@ void init() {
     add_action("do_go_to", "quarters");
     add_action("do_go_to", "ten-forward");
     add_action("do_go_to", "sickbay");
+    add_action("do_go_to", "holodecks");
     add_action("do_go_to", "engineering");
     add_action("do_deck", "deck");
 }
