@@ -44,7 +44,7 @@ EndText
         ,
     ]));
     set("exits", ([
-        "forward" : "/d/FinalFrontier/deck01/bridge",
+        "out" : "/d/FinalFrontier/deck01/aft_passage",
     ]));
-    set("exit_order", ({ "forward" }));
+    set("exit_order", ({ "out" }));
 }

@@ -1,4 +1,8 @@
 // /d/FinalFrontier/deck01/bridge.c
+// Exit convention for the domain: cardinals where you are navigating,
+// named exits where the destination is its own place, "out" where there
+// is one way back. Port and starboard stay in the prose and out of the
+// exits, which is where the vocabulary belongs.
 #include "/d/FinalFrontier/frontier.h"
 inherit FF_ROOM;
 
@@ -11,8 +15,9 @@ horseshoe of consoles wraps the upper deck behind you, and below, three
 seats face a viewscreen showing stars that do not appear to be moving at
 all. The carpet is grey and immaculate and worn pale in a track between
 the turbolift and the command chair. Somebody has been walking that line
-for seven years. The ready room is forward to starboard, the observation
-lounge aft, and the turbolift stands aft to port with its indicator lit.
+for seven years. The ready room lies off the starboard corner, a short
+passage to the observation lounge off the port one, and the turbolift
+stands aft to starboard with its indicator lit.
 EndText
     );
     set("item_desc", ([
@@ -56,9 +61,9 @@ EndText
         ,
     ]));
     set("exits", ([
-        "starboard" : "/d/FinalFrontier/deck01/ready_room",
-        "aft"       : "/d/FinalFrontier/deck01/observation_lounge",
-        "port"      : "/d/FinalFrontier/deck01/turbolift",
+        "northwest" : "/d/FinalFrontier/deck01/aft_passage",
+        "northeast" : "/d/FinalFrontier/deck01/turbolift",
+        "readyroom" : "/d/FinalFrontier/deck01/ready_room",
     ]));
-    set("exit_order", ({ "starboard", "aft", "port" }));
+    set("exit_order", ({ "northwest", "northeast", "readyroom" }));
 }
