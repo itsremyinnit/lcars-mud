@@ -138,6 +138,22 @@ Undefined groups in `access` (`tmi`, `adm`, `lima`, `teachers`, `spells`) are de
 - **A domain needs a `d_master.c`** before its `[Domain]` entry goes in `groups`, or the parse fails and the master shuts the MUD down at boot.
 - **`test -r` cannot see ACL-granted permissions.** `/opt/mud/etc/tls/` grants `mud` by ACL, and `sudo -u mud test -r` returns false anyway. Verify with a real read (`sudo -u mud head -c 32 <file>`). A false negative here sends you chasing a cert failure that does not exist.
 - **Unsudoed commands after sudoed ones.** `lcars_admin` cannot descend into `/opt/mud/lib` or `/opt/mud/etc`. A glob expands *before* sudo runs. Put the whole thing under `sudo`.
+- **An object cannot destroy an object it does not own.**
+  `/adm/simul_efun/overrides.c` permits `destruct()` only when the
+  caller's euid matches the target's, or the caller is root or an admin.
+  And `valid_seteuid()` only lets an object claim an euid it already owns,
+  so a domain object cannot elevate itself out of the problem. Anything
+  that needs to destroy across uids (a trash can, a cleanup routine) has
+  to go through a daemon under `/adm`, which carries the root uid. See
+  `/adm/daemons/disposal_d.c`.
+- **Two bases that both inherit ROOM cannot be combined.** FluffOS does
+  not share the duplicate; the second copy tries to redefine ROOM's
+  `nomask` property functions and the compile fails. This is why Avakuma's
+  shops cannot inherit its room base.
+- **`OBJECT` defines no `create()`.** An object inheriting it must not
+  call `::create()`. `CONTAINER`, `ARMOR` and `WEAPON` are fine.
+- **NPC and room ids are `set("id", ({ ... }))`,** not `set_id()`, which
+  does not exist here.
 - **`sudo -u mudgit tee` produces `644 mudgit:mud`.** Everything else in the lib is `664 mud:mud`. Files written that way need `chown mud:mud` and `chmod g+w`, or the driver cannot write into a domain's `data/`. `mud-commit` normalises this automatically.
 - **Patch scripts need an idempotency guard, not just a uniqueness assert.** If the replacement text contains the anchor, re-running the block stacks another copy and the assert still passes. This produced three copies of a function in `calenmir.c` (fatal) and three in `user.c` (harmless but wrong). Every patch script should check whether it has already applied and skip.
 
@@ -159,7 +175,13 @@ Wizards arrive at the **Threshold** on login; players still start in the TMI-2 q
 - **Hearthside notice board** at `/d/Nexus/boards/hearth_board.c`.
 - **Welcome screen** (`/adm/news/welcome`): raw-ANSI Space Needle, Rainier, and a Nexus-style rift. **`NO_LOGIN_PAUSE`** is defined in `config.h`, so there is no "[Press ENTER to continue]".
 
-### Avakuma (`/d/Avakuma/`) — the Tolkien bubble
+### Avakuma (`/d/Avakuma/`) — the Tolkien domain
+
+> **See `docs/AVAKUMA.md`.** It is the full account: the room, NPC and
+> shop bases and why they differ, spawning, wandering, dialogue, the
+> shops, the objects, the wanted poster, the jail and the corps hook, what
+> is deferred, and every mudlib change made for it. The summary below is
+> orientation only.
 
 A **standalone domain**, deliberately not under `/d/Nexus/`. Its rooms inherit the stock `ROOM`, not the Nexus base, so nothing here is coupled to Nexus code. Named for Tolkien's Avakúma, the Outer Void (accents dropped: the name becomes a path and a `groups` entry).
 
