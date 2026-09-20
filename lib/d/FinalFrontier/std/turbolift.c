@@ -17,6 +17,7 @@ inherit FF_ROOM;
 
 #define STOPS ([ \
   "bridge"       : ({  1, "/d/FinalFrontier/deck01/bridge",           "Main Bridge" }), \
+  "security"     : ({  6, "/d/FinalFrontier/deck06/corridor_fore",    "Security and Transporters" }), \
   "quarters"     : ({  8, "/d/FinalFrontier/deck08/corridor_fore",    "Officers' Quarters" }), \
   "ten-forward"  : ({ 10, "/d/FinalFrontier/deck10/ten_forward",      "Ten-Forward" }), \
   "sickbay"      : ({ 12, "/d/FinalFrontier/deck12/sickbay",          "Sickbay" }), \
@@ -61,6 +62,7 @@ void init() {
     add_action("do_go_to", "quarters");
     add_action("do_go_to", "ten-forward");
     add_action("do_go_to", "sickbay");
+    add_action("do_go_to", "security");
     add_action("do_go_to", "holodecks");
     add_action("do_go_to", "engineering");
     add_action("do_deck", "deck");
