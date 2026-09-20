@@ -6,7 +6,7 @@
 inherit OBJECT;
 
 void create() {
-    ::create();
+    // No ::create() here: OBJECT defines none, unlike CONTAINER.
     seteuid(getuid());
     set("id", ({ "fire", "campfire", "large campfire", "flames", "brand" }));
     set("short", "A large campfire (burning)");
