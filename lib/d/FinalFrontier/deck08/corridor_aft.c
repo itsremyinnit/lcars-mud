@@ -29,6 +29,7 @@ EndText
     set("exits", ([
         "north"     : "/d/FinalFrontier/deck08/corridor_port_aft",
         "northeast" : "/d/FinalFrontier/deck08/corridor_starboard",
+        "lift"      : "/d/FinalFrontier/deck08/turbolift_aft",
     ]));
-    set("exit_order", ({ "north", "northeast" }));
+    set("exit_order", ({ "north", "northeast", "lift" }));
 }

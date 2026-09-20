@@ -23,6 +23,7 @@ inherit FF_ROOM;
   "transporter" : ({  6, "fore", "/d/FinalFrontier/deck06/corridor_fore",     "Transporter Room Three" }), \
   "brig"        : ({  6, "aft",  "/d/FinalFrontier/deck06/corridor_port_aft", "Security and Cargo" }), \
   "quarters"    : ({  8, "fore", "/d/FinalFrontier/deck08/corridor_fore",     "Officers' Quarters" }), \
+  "viewport"    : ({  8, "aft",  "/d/FinalFrontier/deck08/corridor_aft",      "Quarters, Aft Section" }), \
   "ten-forward" : ({ 10, "fore", "/d/FinalFrontier/deck10/corridor_ten",      "Ten-Forward" }), \
   "holodecks"   : ({ 11, "",     "/d/FinalFrontier/deck11/corridor",          "Holodecks and Arboretum" }), \
   "sickbay"     : ({ 12, "",     "/d/FinalFrontier/deck12/sickbay",           "Sickbay" }), \
@@ -66,6 +67,7 @@ void init() {
     add_action("do_go_to", "transporter");
     add_action("do_go_to", "brig");
     add_action("do_go_to", "quarters");
+    add_action("do_go_to", "viewport");
     add_action("do_go_to", "ten-forward");
     add_action("do_go_to", "holodecks");
     add_action("do_go_to", "sickbay");
