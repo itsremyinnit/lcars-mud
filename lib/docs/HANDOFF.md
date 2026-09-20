@@ -138,6 +138,33 @@ Undefined groups in `access` (`tmi`, `adm`, `lima`, `teachers`, `spells`) are de
 - **A domain needs a `d_master.c`** before its `[Domain]` entry goes in `groups`, or the parse fails and the master shuts the MUD down at boot.
 - **`test -r` cannot see ACL-granted permissions.** `/opt/mud/etc/tls/` grants `mud` by ACL, and `sudo -u mud test -r` returns false anyway. Verify with a real read (`sudo -u mud head -c 32 <file>`). A false negative here sends you chasing a cert failure that does not exist.
 - **Unsudoed commands after sudoed ones.** `lcars_admin` cannot descend into `/opt/mud/lib` or `/opt/mud/etc`. A glob expands *before* sudo runs. Put the whole thing under `sudo`.
+- **Inherited programs are compiled into the child, all the way down.**
+  Updating a base does nothing for anything that inherits it until the
+  children are recompiled too. `/std/user.c` inherits `LIVING` inherits
+  `/std/body.c`, so `update /std/body` left every player on the old body
+  code and a new function on it reported as "does not contain". Update the
+  whole chain: `update /std/body, update /std/living, update /std/user`,
+  then relog.
+- **Two mudlib bases that share an ancestor cannot be combined.** FluffOS
+  does not share the duplicate: the second copy tries to redefine the
+  shared ancestor's `nomask` property functions (`set`, `query`, `_set`,
+  `_query`, `query_temp`) and the compile fails with "Illegal to redefine
+  nomask function". Hit twice so far: `AVAKUMA_ROOM` + `/std/shop` (both
+  ROOM), and `CONTAINER` + `ARMOR` (both OBJECT). The workaround both
+  times was to inherit one and add the other's verbs by hand.
+- **`/std/body.c` and `/std/user.c` are load-bearing for login.** Breaking
+  either locks every player out including you, and there is no in-game
+  route back: it takes a `checkout` on the VM and a `mud-restart`. Commit
+  before editing them, and test with `update` while still logged in, so a
+  failure leaves your running program intact.
+- **Function definitions must be at file scope.** Inserting them inside an
+  existing function body gives `syntax error, unexpected '('` pointing at
+  your new function. This is how `/std/body.c` got broken: a patch
+  anchored on a line that happened to be inside `init_setup()`.
+- **A command refusal must `write()` and `return 1`, not `notify_fail()`
+  and `return 0`.** Returning 0 means "not a match, keep looking", so the
+  parser exhausts its options and reports a parse failure ("Put what in
+  what?") while your message is discarded.
 - **An object cannot destroy an object it does not own.**
   `/adm/simul_efun/overrides.c` permits `destruct()` only when the
   caller's euid matches the target's, or the caller is root or an admin.
@@ -187,6 +214,33 @@ reconstruction of Framsburg, its guard barracks, the Sheriff's Guild and
 the orc newbie dungeon. 38 rooms with finished prose, 26 NPCs, two working
 shops. Reached from the Nexus through the Towers Arch, which is one-way;
 the ring's `recall` is the way back.
+
+### Hand slots
+
+TMI-2 tracked `weapon1`/`weapon2` and nothing else, so a player could
+carry any number of open drinks and torches. `/std/body.c` now has:
+
+- `hands_used()` / `hands_free()`, out of `MAX_HANDS` 2.
+- An object declares `set("hands", n)` if it must be held. A wielded
+  weapon takes one, or two if it sets `nosecond`. A worn shield takes one.
+  Everything else is carried freely, which matches T2T: only the drinks
+  and the torch ever showed as "in hands".
+- `receive_object()` refuses anything needing a hand when there is not one
+  to spare. Only objects declaring `hands` are checked, so nothing else
+  changes.
+- `/cmds/std/_hands.c` reports what is in each.
+
+**Anything new that must be held needs `set("hands", 1)` on it.** Nothing
+infers it.
+
+Related: `/std/container.c` honours `no_container` on an object that
+cannot sensibly be packed away, for open-topped things that would spill.
+The Framsburg beer and whiskey set it; the lidded stew bowl does not,
+which is why stew can be carried off and the drinks cannot.
+
+**Not modelled:** drunkenness. T2T tracks it, garbles your `score`
+readout while you are drunk, and prints "You can see straight again" and
+"The world finally stops spinning" as it wears off.
 
 ### Rings and corps
 

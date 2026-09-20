@@ -229,6 +229,27 @@ long sharp spear 32, extremely large broadsword 418, backpack 32, torch 0
 
 ---
 
+## 6a. Meryne's kitchen
+
+A third vendor, and a different shape from the two shops: `order <item>`
+rather than `buy`, paid on order, handled by the room itself rather than a
+storeroom.
+
+Beer 2, whiskey 10, stew 13. Each arrives as its own object with the
+original description, is consumed with `drink` or `eat`, and leaves an
+empty behind (bottle, glass, bowl) worth nothing, which exists to be
+binned. The stew also answers `dump`.
+
+The beer and whiskey set `no_container` and `hands` 1: open-topped, so
+they cannot be packed and must be held. The stew bowl has a lid, so it
+can go in a backpack and be carried off to eat later. That distinction is
+in the original and the bowl description mentions it.
+
+The backpacks are wearable, with the wear verbs added directly rather than
+by inheriting ARMOR, which does not compile alongside CONTAINER.
+
+---
+
 ## 7. The wanted poster
 
 guild/boards/wanted_poster.c, in the conference room. Seeded with the
@@ -268,9 +289,7 @@ Wizard powers stay keyed to Calenmir specifically in cmd_hook in
 
 ## 9. Deferred
 
-- Shops: Meryne's food and drink in the Framsburg kitchen (beer 2, whiskey
-  10, stew 13; the menu is already readable), and the list filters for
-  both existing shops.
+- The list filters for both existing shops.
 - Tarlyn's training (cost, train), against the skill system in
   /std/living/skills.c. Needs a decision on what sheriffs train in.
 - The nurse's healing and reviving. She is a functional healer in the
