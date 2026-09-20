@@ -46,4 +46,12 @@ EndText
         "south" : "/d/Avakuma/framsburg/kitchen",
     ]));
     set("exit_order", ({ "east", "north", "south" }));
+
+    // /std/room.c's reset() clones these up to the given count at load,
+    // counting what is already present by the NPC's first "id". It runs
+    // from create(), so these appear whenever the room loads.
+    set("objects", ([
+        "/d/Avakuma/framsburg/npc/injured_soldier" : 3,
+        "/d/Avakuma/framsburg/npc/nurse"           : 1,
+    ]));
 }
