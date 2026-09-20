@@ -132,6 +132,12 @@ everything.
 Not built: the list filters the original signs advertise (by type, by
 price, by armour coverage) and sell-from-container.
 
+Shops require a living keeper. The shop is the room, not the man, so
+without a check it keeps trading over his corpse: "Malcolm tells you: I
+have the following for sale" with Malcolm's body on the floor. list, buy,
+sell, value and handle all refuse with "There is nobody here to trade
+with." until he respawns.
+
 Watch the ids. The broadsword originally answered to "sword", which made
 "sword 1" pick a broadsword instead of a short sword. Overlapping ids
 break disambiguation quietly.

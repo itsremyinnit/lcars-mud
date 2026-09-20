@@ -256,6 +256,76 @@ The **wanted poster** (`/d/Avakuma/guild/boards/wanted_poster.c`) is seeded with
 
 ---
 
+## Design notes from T2T
+
+Captured from T2T's own help files. These are specifications for things
+not yet built here, recorded so the design work does not have to be
+redone. None of it is implemented.
+
+### Encumbrance
+
+Five levels: unencumbered, lightly, moderately, heavily, severely.
+
+Based on **strength** against the **weight** of carried items and gold.
+Bulk counts too, but **only for things carried in the hands**; worn armour
+does not count. **Gold weighs: 10 gold to the pound.**
+
+Effects, most of which need systems we do not have yet:
+- Combat: you are easier to hit when encumbered.
+- Swimming: may be impossible, or drains endurance faster.
+- Sneaking: carrying noisy things gives you away.
+- Busy combat rounds: actions that make you busy (eating, opening a door)
+  block more rounds the more encumbered you are.
+
+`/cmds/std/_inventory.c` has a `query_encumbrance()` stub returning
+"unencumbered". When encumbrance is built, that is the only function that
+needs replacing for the display.
+
+### Armour slots
+
+**The mudlib already has slots.** `/std/armor.c` keys the player's `armor`
+mapping by the item's `type` property, so `type` *is* the slot name. T2T
+uses `back` plus `other1` through `other4` for miscellany, alongside the
+conventional body locations.
+
+The Avakuma backpack sets `wear_slot` and checks by hand instead, because
+CONTAINER and ARMOR cannot be inherited together (see the diamond rule
+above). If the slot system is ever extended, that hand-rolled check should
+fold into it.
+
+T2T's `armour` command lists what covers what, with a `verbose` argument
+showing empty slots, a `set armour_verbose on` preference, and
+`set armour_other off` to hide autoloading miscellany.
+
+### Inventory variants
+
+T2T's `inventory` takes arguments we do not support:
+`i all` (everything not in a closed container, with like items counted
+together), `i <container>`, `i here` (things on the ground),
+`i all here <item>`, and `i brief` (filters out autoloading items not in
+your hands or a container). Plain `i` is cheap enough to use in combat;
+the others are not.
+
+`gold` is its own command, and makes you busy in combat because counting
+takes time.
+
+### Drunkenness
+
+Tracked, and it garbles readouts: `gold` and `score` give estimates rather
+than real numbers while you are drunk. It wears off with "You can see
+straight again" and "The world finally stops spinning and settles down."
+
+### Combat consequence
+
+Untouched, and the most interesting design left. Killing Malcolm currently
+takes two blows from a short sword and has no consequence beyond the shop
+closing until he respawns. Worth deciding: who is killable, what protects
+the rest, what they drop, and whether the Rim-Ainacam jails you for it.
+The jail, the guard's corps check and a guild of law enforcement already
+exist and would fit together.
+
+---
+
 ## 6. Deferred, and honest about it
 
 - **Shops:** the armoury wagon, the guild shop, and Meryne's food-and-drink menu in the Framsburg kitchen. All three have readable signs or menus already; none of them trade.
