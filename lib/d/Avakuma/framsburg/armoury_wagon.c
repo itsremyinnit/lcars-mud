@@ -1,11 +1,13 @@
 // /d/Avakuma/framsburg/armoury_wagon.c
-// A working shop in the original. The sign lists the shop commands and
-// is readable; the shop mechanics themselves are deferred.
-#include "/d/Avakuma/avakuma.h"
-inherit AVAKUMA_ROOM;
+// Malcolm's shop. See /d/Avakuma/std/avakuma_shop.c for why this inherits
+// the shop base rather than AVAKUMA_ROOM.
+#include <money.h>
+inherit "/d/Avakuma/std/avakuma_shop";
 
 void create() {
     ::create();
+    set("light", 1);
+    set_shopkeeper("Malcolm");
     set("short", "The armoury wagon");
     set("long", @EndText
     Inside the armoury wagon, where a man may buy or sell most of what
@@ -15,24 +17,10 @@ you reach for anything.
 EndText
     );
     set("item_desc", ([
-        "weapons" : @EndText
-    Hanging here and there about the wagon, waiting to be bought.
-EndText
-        ,
-        "armours" : @EndText
-    Primitive work, and it will still keep more off you than your shirt
-will.
-EndText
-        ,
-        "armour" : @EndText
-    Primitive work, and it will still keep more off you than your shirt
-will.
-EndText
-        ,
-        "sign" : @EndText
-    Letters, certainly. Reading them would be the next step.
-EndText
-        ,
+        "weapons" : "    Hanging here and there about the wagon, waiting to be bought.\n",
+        "armours" : "    Primitive work, and it will still keep more off you than your shirt will.\n",
+        "armour"  : "    Primitive work, and it will still keep more off you than your shirt will.\n",
+        "sign"    : "    Letters, certainly. Reading them would be the next step.\n",
         "partition" : @EndText
     Short, this being a small wagon. Its business is keeping customers
 on their own side of the merchandise.
@@ -42,15 +30,14 @@ EndText
     set("exits", ([
         "out" : "/d/Avakuma/framsburg/armoury_house",
     ]));
-    set("exit_order", ({ "out" }));
+    set("pre_exit_func/out", "leaving");
 
-    set("objects", ([
-        "/d/Avakuma/framsburg/npc/malcolm" : 1,
-    ]));
-    spawn_objects();
+    storeroom = clone_object("/d/Avakuma/framsburg/storeroom");
+    spawn_here("/d/Avakuma/framsburg/npc/malcolm");
 }
 
 void init() {
+    ::init();
     add_action("do_read", "read");
 }
 

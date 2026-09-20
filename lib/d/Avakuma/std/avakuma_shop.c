@@ -29,6 +29,10 @@ inherit "/std/shop";
 // Keyed by the handler; the room refuses to let anyone out holding one.
 nosave mapping handled;
 
+// Set by pick_stock when it has already printed a disambiguation list,
+// so callers stay quiet instead of adding "I do not carry that" after it.
+nosave int ambiguous;
+
 // Resale is 14/25 of value, which matches T2T (a 34 gold backpack
 // fetched 19). Payout is capped: the shop has a budget and says so when
 // an item exceeds it, which is what stops a shop being a money printer.
@@ -71,6 +75,54 @@ private int gold_value(object ob) {
     return copper / coinvalue("gold");
 }
 
+// Finding one item in the storeroom when several match.
+//
+// T2T numbers duplicates and asks which one: "handle short sword" lists
+// them and says "I have many of those, which would you like?", and
+// "handle short sword 1" takes the first. Returns the object, or 0 after
+// having already printed the disambiguation list.
+private object pick_stock(string str, string verb) {
+    object *matches, *inv;
+    string base;
+    int i, want;
+
+    ambiguous = 0;
+    if (!storeroom || !str) return 0;
+
+    // Trailing number picks one directly.
+    want = 0;
+    base = str;
+    if (sscanf(str, "%s %d", base, want) != 2) {
+        base = str;
+        want = 0;
+    }
+
+    inv = all_inventory(storeroom);
+    matches = ({ });
+    for (i = 0; i < sizeof(inv); i++)
+        if (inv[i]->id(base)) matches += ({ inv[i] });
+
+    if (!sizeof(matches)) return 0;
+
+    if (want) {
+        if (want < 1 || want > sizeof(matches)) {
+            write(keeper() + " tells you: I do not have that many.\n");
+            ambiguous = 1;
+            return 0;
+        }
+        return matches[want - 1];
+    }
+
+    if (sizeof(matches) == 1) return matches[0];
+
+    for (i = 0; i < sizeof(matches); i++)
+        write(sprintf(" %s %d  :   %3d - %s\n", base, i + 1,
+              gold_value(matches[i]), (string)matches[i]->query("short")));
+    write(keeper() + " tells you: I have many of those, which would you like?\n");
+    ambiguous = 1;
+    return 0;
+}
+
 int list() {
     object *stock;
     string *shorts;
@@ -83,8 +135,8 @@ int list() {
     prices = ({ });
 
     for (i = 0; i < sizeof(stock); i++) {
+        // Worthless items still list, at 0, the way T2T showed torches.
         price = gold_value(stock[i]);
-        if (!price) continue;
         short_desc = (string)stock[i]->query("short");
         if (!short_desc) continue;
 
@@ -122,8 +174,9 @@ int buy(string str) {
         return 0;
     }
 
-    ob = present(str, storeroom);
+    ob = pick_stock(str, "buy");
     if (!ob) {
+        if (ambiguous) return 1;
         notify_fail(keeper() + " tells you: I do not carry that.\n");
         return 0;
     }
@@ -252,9 +305,16 @@ int do_handle(string str) {
         return 0;
     }
 
-    ob = present(str, storeroom);
+    ob = pick_stock(str, "handle");
     if (!ob) {
+        if (ambiguous) return 1;
         notify_fail(keeper() + " tells you: I do not carry that.\n");
+        return 0;
+    }
+    // Nothing worthless is worth protecting, so it is not worth handling.
+    if (!gold_value(ob)) {
+        notify_fail(keeper() +
+            " tells you: I can't let you handle that item, sorry.\n");
         return 0;
     }
     if (ob->move(who) != MOVE_OK) {
