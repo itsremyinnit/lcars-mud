@@ -24,9 +24,9 @@ EndText
         ,
     ]));
     set("exits", ([
-        "west"      : "/d/FinalFrontier/deck08/corridor_fore",
-        "southeast" : "/d/FinalFrontier/deck08/corridor_port_aft",
-        "quarters"  : "/d/FinalFrontier/deck08/quarters_guest",
+        "east" : "/d/FinalFrontier/deck08/corridor_fore",
+        "south" : "/d/FinalFrontier/deck08/corridor_port_aft",
+        "quarters" : "/d/FinalFrontier/deck08/quarters_guest",
     ]));
-    set("exit_order", ({ "west", "southeast", "quarters" }));
+    set("exit_order", ({ "east", "south", "quarters" }));
 }

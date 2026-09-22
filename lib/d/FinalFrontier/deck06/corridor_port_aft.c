@@ -22,10 +22,10 @@ EndText
         ,
     ]));
     set("exits", ([
-        "north"    : "/d/FinalFrontier/deck06/corridor_fore",
-        "east"     : "/d/FinalFrontier/deck06/corridor_aft",
-        "cargo"    : "/d/FinalFrontier/deck06/cargo_control",
-        "lift"     : "/d/FinalFrontier/deck06/turbolift_aft",
+        "north" : "/d/FinalFrontier/deck06/corridor_fore",
+        "southeast" : "/d/FinalFrontier/deck06/corridor_aft",
+        "cargo" : "/d/FinalFrontier/deck06/cargo_control",
+        "lift" : "/d/FinalFrontier/deck06/turbolift_aft",
     ]));
-    set("exit_order", ({ "north", "east", "cargo", "lift" }));
+    set("exit_order", ({ "north", "southeast", "cargo", "lift" }));
 }

@@ -27,9 +27,9 @@ EndText
         "nacelles" : "    Blue, steady, and further away than the ship feels from the inside.\n",
     ]));
     set("exits", ([
-        "north"     : "/d/FinalFrontier/deck08/corridor_port_aft",
+        "northwest" : "/d/FinalFrontier/deck08/corridor_port_aft",
         "northeast" : "/d/FinalFrontier/deck08/corridor_starboard",
-        "lift"      : "/d/FinalFrontier/deck08/turbolift_aft",
+        "lift" : "/d/FinalFrontier/deck08/turbolift_aft",
     ]));
-    set("exit_order", ({ "north", "northeast", "lift" }));
+    set("exit_order", ({ "northwest", "northeast", "lift" }));
 }

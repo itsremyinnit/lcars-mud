@@ -28,11 +28,11 @@ EndText
         "carpet" : "    Grey, clean, and quiet underfoot. It is the same carpet on every deck.\n",
     ]));
     set("exits", ([
-        "east" : "/d/FinalFrontier/deck08/corridor_port",
-        "west" : "/d/FinalFrontier/deck08/corridor_starboard",
+        "west" : "/d/FinalFrontier/deck08/corridor_port",
+        "southeast" : "/d/FinalFrontier/deck08/corridor_starboard",
         "lift" : "/d/FinalFrontier/deck08/turbolift",
     ]));
-    set("exit_order", ({ "east", "west", "lift" }));
+    set("exit_order", ({ "west", "southeast", "lift" }));
 
     set("objects", ([
         "/d/FinalFrontier/npc/crewman" : 1,

@@ -13,8 +13,8 @@ the stars beyond it are the brightest thing in the room by a wide margin.
 Tables in ones and twos, low chairs, a long bar to port with bottles
 behind it that no replicator made. The lighting has been set low enough
 to be a decision. A handful of people are here, none of them in a hurry,
-and the room is doing the thing it was built to do, which is absorb the
-day off a crew that has had several too many of them.
+and the room is doing what it was built to do: taking the edge off a crew
+that has had several too many long days in a row.
 EndText
     );
     set("item_desc", ([

@@ -26,8 +26,8 @@ EndText
         "doors" : "    Quarters, numbered upward as the corridor curves.\n",
     ]));
     set("exits", ([
-        "east"      : "/d/FinalFrontier/deck08/corridor_fore",
+        "northwest" : "/d/FinalFrontier/deck08/corridor_fore",
         "southwest" : "/d/FinalFrontier/deck08/corridor_aft",
     ]));
-    set("exit_order", ({ "east", "southwest" }));
+    set("exit_order", ({ "northwest", "southwest" }));
 }

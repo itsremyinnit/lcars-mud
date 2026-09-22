@@ -21,10 +21,10 @@ EndText
         "doors" : "    More quarters, their numbers climbing as the corridor turns.\n",
     ]));
     set("exits", ([
-        "northwest" : "/d/FinalFrontier/deck08/corridor_port",
-        "south"     : "/d/FinalFrontier/deck08/corridor_aft",
+        "north" : "/d/FinalFrontier/deck08/corridor_port",
+        "southeast" : "/d/FinalFrontier/deck08/corridor_aft",
     ]));
-    set("exit_order", ({ "northwest", "south" }));
+    set("exit_order", ({ "north", "southeast" }));
 
     set("objects", ([
         "/d/FinalFrontier/npc/spot" : 1,

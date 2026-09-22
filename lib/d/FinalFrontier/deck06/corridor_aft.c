@@ -26,8 +26,8 @@ EndText
     ]));
     set("exits", ([
         "north" : "/d/FinalFrontier/deck06/corridor_mid",
-        "west"  : "/d/FinalFrontier/deck06/corridor_port_aft",
-        "brig"  : "/d/FinalFrontier/deck06/brig_entry",
+        "northwest" : "/d/FinalFrontier/deck06/corridor_port_aft",
+        "brig" : "/d/FinalFrontier/deck06/brig_entry",
     ]));
-    set("exit_order", ({ "north", "west", "brig" }));
+    set("exit_order", ({ "north", "northwest", "brig" }));
 }
