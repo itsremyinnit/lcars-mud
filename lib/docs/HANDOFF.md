@@ -6,6 +6,62 @@ A living orientation doc for anyone (human or AI) picking up this project. It is
 
 ---
 
+## 0. Start here
+
+For a new session picking this up. Read this section, then the rest of
+this file, then AVAKUMA.md or FINALFRONTIER.md depending on the work.
+
+**Reading the code.** The repo is itsremyinnit/lcars-mud on GitHub and is
+currently public, so clone it and read the real files rather than asking
+for them to be pasted. The work tree on the VM is /opt/mud, so repo paths
+begin lib/.
+
+**The working loop:**
+
+1. Read the relevant files from the repo.
+2. Hand over a bash block for the VM, led with `clear` and labelled
+   `# === VM ===`, that writes files as `mudgit` (`sudo -u mudgit tee`)
+   and fixes ownership afterwards. Jeremy pastes it into an SSH session.
+3. Hand over an in-game line to compile and test.
+4. Jeremy pastes the output back. Read it properly before moving on.
+5. When it works: `mud-commit "message"`.
+
+**Format preferences:**
+
+- In-game commands go on one line as `do cmd1, cmd2, cmd3`.
+- `call`, `clone` and `dest` cannot run inside `do` (they count as
+  illegal force attempts), so those go on their own lines.
+- Long `do` lines (roughly 20+ commands) get forced into brief mode and
+  lose room descriptions. Keep them short.
+- No em-dashes, anywhere, in any writing.
+- For multi-item work, propose the short list first and agree it before
+  writing the detail.
+- Jeremy's browser MUD client does not take Ctrl+C, so he sometimes
+  pastes his own input back by accident. Ask for the output.
+- Never put a triple-backtick fence inside a heredoc in a reply. It
+  closes the reply's own code block and chops the message in two.
+  Indent instead.
+
+**Patch discipline**, each learned the hard way:
+
+- Every patch script checks whether it has already applied and skips
+  if so. A uniqueness assert alone is not enough: if the replacement
+  contains the anchor, re-running stacks another copy.
+- When a patch gets tangled, stop patching and write the whole file.
+- Anything under /std/ or /adm/, especially /std/body.c and
+  /std/user.c: commit first, then `update` while still logged in, and
+  only relog once it compiles. A broken body locks everyone out.
+- Update a base before anything that inherits it. See 3.
+
+**Capturing from T2T.** Framsburg and its neighbours were rebuilt from
+live captures of the original. There is no `goto` there, so Jeremy
+navigates himself. Keep routes to a few moves: one failed step and the
+rest of a `do` line runs in the wrong room. Two passes per area worked
+well: descriptions first, then a second `do` line probing every noun
+the descriptions mention.
+
+---
+
 ## 1. What this is
 
 A private, self-hosted MUD recreating the feel of **The Two Towers** (t2tmud.org), the LPMUD that Jeremy and his friend **Jarrod** played and later wizarded on. It runs the **TMI-2 mudlib** on the modern **FluffOS** driver. It's a **shared sandbox** for the two of them to build in and goof off together, reached through a themed hub called the **Nexus** (branded "Nexus-96: Shattered Sector").

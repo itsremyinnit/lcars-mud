@@ -56,6 +56,17 @@ Exits:
 - No port or starboard as exits. They stay in the prose, which is
   where that vocabulary belongs.
 
+Compass, for decks laid out as rings:
+
+- Forward is north. Port is therefore WEST and starboard is EAST.
+  Getting this backwards is easy and has happened.
+- Trace every ring on paper before wiring it. Each step must reverse
+  cleanly, and walking the whole ring must return you to where you
+  started. Rooms can connect correctly by name while the directions
+  describe a shape that does not exist, and it feels wrong to walk
+  long before anyone can say why.
+- Decks 6 and 8 are both traced and closed.
+
 Register, split deliberately:
 
 - Public spaces are plain and functional. Corridors, engineering,
