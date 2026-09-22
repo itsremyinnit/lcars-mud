@@ -36,4 +36,9 @@ EndText
         "aft"     : "/d/FinalFrontier/deck10/turbolift",
     ]));
     set("exit_order", ({ "forward", "aft" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/crewman" : 1,
+    ]));
+    spawn_objects();
 }

@@ -41,4 +41,9 @@ EndText
         "out" : "/d/FinalFrontier/deck06/corridor_fore",
     ]));
     set("exit_order", ({ "out" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/transporter_chief" : 1,
+    ]));
+    spawn_objects();
 }

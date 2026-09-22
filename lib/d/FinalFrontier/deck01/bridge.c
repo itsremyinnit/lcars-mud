@@ -66,4 +66,10 @@ EndText
         "readyroom" : "/d/FinalFrontier/deck01/ready_room",
     ]));
     set("exit_order", ({ "northwest", "northeast", "readyroom" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/riker" : 1,
+        "/d/FinalFrontier/npc/data" : 1,
+    ]));
+    spawn_objects();
 }

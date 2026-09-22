@@ -63,4 +63,9 @@ EndText
         "out" : "/d/FinalFrontier/deck01/bridge",
     ]));
     set("exit_order", ({ "out" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/picard" : 1,
+    ]));
+    spawn_objects();
 }

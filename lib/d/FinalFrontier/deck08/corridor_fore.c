@@ -33,4 +33,9 @@ EndText
         "lift" : "/d/FinalFrontier/deck08/turbolift",
     ]));
     set("exit_order", ({ "east", "west", "lift" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/crewman" : 1,
+    ]));
+    spawn_objects();
 }

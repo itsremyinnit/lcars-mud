@@ -65,4 +65,10 @@ EndText
         "aft" : "/d/FinalFrontier/deck10/corridor_ten",
     ]));
     set("exit_order", ({ "aft" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/guinan" : 1,
+        "/d/FinalFrontier/npc/troi" : 1,
+    ]));
+    spawn_objects();
 }

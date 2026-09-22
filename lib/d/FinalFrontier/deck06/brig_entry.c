@@ -45,4 +45,9 @@ EndText
         "cells" : "/d/FinalFrontier/deck06/brig_cells",
     ]));
     set("exit_order", ({ "out", "cells" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/worf" : 1,
+    ]));
+    spawn_objects();
 }

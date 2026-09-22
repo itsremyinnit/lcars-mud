@@ -66,4 +66,9 @@ EndText
         "lift"     : "/d/FinalFrontier/deck11/turbolift",
     ]));
     set("exit_order", ({ "holodeck", "aft", "lift" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/barclay" : 1,
+    ]));
+    spawn_objects();
 }

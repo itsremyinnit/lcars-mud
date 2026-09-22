@@ -68,4 +68,10 @@ EndText
         "aft" : "/d/FinalFrontier/deck36/turbolift",
     ]));
     set("exit_order", ({ "aft" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/laforge" : 1,
+        "/d/FinalFrontier/npc/engineer" : 2,
+    ]));
+    spawn_objects();
 }

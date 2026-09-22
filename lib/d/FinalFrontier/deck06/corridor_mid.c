@@ -29,4 +29,9 @@ EndText
         "south"     : "/d/FinalFrontier/deck06/corridor_aft",
     ]));
     set("exit_order", ({ "northwest", "south" }));
+
+    set("objects", ([
+        "/d/FinalFrontier/npc/crewman" : 1,
+    ]));
+    spawn_objects();
 }
